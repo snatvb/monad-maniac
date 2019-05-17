@@ -79,6 +79,29 @@ describe('Pure functions', () => {
     })
   })
 
+  describe('apply', () => {
+    const maybeConcat = Maybe.of(concat('bar'))
+    it('with value', () => {
+      const just = Maybe.of('foo')
+      expect(Maybe.apply(maybeConcat, just).toString()).toBe('Just(foobar)')
+    })
+
+    it('with null', () => {
+      const maybeDouble = Maybe.of(double)
+      const nothing = Maybe.of(null)
+      const nothing2 = Maybe.of(undefined)
+      expect(Maybe.apply(maybeDouble, nothing).toString()).toBe('Nothing()')
+      expect(Maybe.apply(maybeDouble, nothing2).toString()).toBe('Nothing()')
+    })
+
+    it('carry', () => {
+      const just = Maybe.of('foo')
+      const carried = Maybe.apply<string, (v: string) => string>(maybeConcat)
+      expect(typeof carried).toBe('function')
+      expect(carried(just).toString()).toBe('Just(foobar)')
+    })
+  })
+
   describe('getOrElse', () => {
     it('with value', () => {
       const just = Maybe.of('foo')
