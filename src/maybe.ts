@@ -2,6 +2,8 @@ import * as helpers from './helpers'
 
 type Nullable<T> = T | null | undefined
 
+type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<NonNullable<ReturnType<U>>>
+
 export interface MaybeShape<T> {
   /**
    * Apply some function to value in container. `map` for Just
@@ -109,7 +111,7 @@ export interface MaybeShape<T> {
    * const resultAddNull= just.apply(maybeAddNull).toString() // Nothing()
    * ```
    */
-  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>>
+  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
 }
 
 /**
@@ -153,6 +155,29 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   } else {
     return new Just(value as NonNullable<T>)
   }
+}
+
+/**
+ * Method like [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply)
+ * but to get maybe and call method `apply` with a function.
+ *
+ * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const foo = Maybe.of(12)
+ * const appliedFoo = Maybe.apply(foo, Maybe.of((x) => x * x)) // Just(144)
+ * ```
+ * */
+export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe: MaybeShape<T>): ApplicativeResult<T, U>
+/**
+ * Just curried `apply`.
+ *
+ * _(a -> b) -> Maybe(a) -> Maybe(b)_
+ */
+export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>): (maybe: MaybeShape<T>) => ApplicativeResult<T, U>
+export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe?: MaybeShape<T>): ApplicativeResult<T, U> | ((maybe: MaybeShape<T>) => ApplicativeResult<T, U>) {
+  const op = (m: MaybeShape<T>) => m.apply(applicative)
+  return helpers.curry1(op, maybe)
 }
 
 /**
@@ -243,7 +268,7 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
-  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
+  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U> {
     const result = maybe.map((fn) => fn(this.value)).getOrElse(undefined)
     return of(result)
   }
@@ -285,7 +310,7 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
-  apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
+  apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): ApplicativeResult<T, U> {
     return new Nothing()
   }
 }
