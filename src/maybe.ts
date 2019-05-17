@@ -24,6 +24,25 @@ export interface MaybeShape<T> {
   /**
    * Working like [`MaybeShape.map`](#map) but returns not `Maybe`, but the function result.
    * If `chain` will call on `Nothing` then return `undefined`.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const result = Maybe
+   *  .of(100)
+   *  .map((x) => x / 2) // 50
+   *  .map((x) => x + 10) // 60
+   *  .chain((x) => x / 3) // 20
+   * console.log(result) // 20
+   *
+   * const resultBad = Maybe
+   *  .of(100)
+   *  .map((x) => x / 2) // 50
+   *  .filter((x) => x > 1000)
+   *  .map((x) => x + 10) // 60
+   *  .chain((x) => x / 3) // 20
+   * console.log(result) // undefined
+   * ```
    */
   chain<U>(f: (value: T) => U): U | undefined
 
