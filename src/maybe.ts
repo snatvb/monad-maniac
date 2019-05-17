@@ -4,20 +4,20 @@ type Nullable<T> = T | null | undefined
 
 export interface MaybeShape<T> {
   /**
-   Apply some function to value in container. `map` for Just
-   will call the function with value, for `Nothing` return Nothing.
-   If `map` will return `null` or `undefined` then return `Nothing`.
-
-   ```ts
-   import { Maybe } from 'monad-maniac'
-
-   const zeroDivider = 0
-   const tenDivide = (n: number): number => n === 0 ? null : 10 / n
-   const foo = Maybe.of(zeroDivider).map(tenDivide) // Noting
-
-   const nonZeroDivider = 2
-   const bar = Maybe.of(nonZeroDivider).map(tenDivide) // Just(5)
-   ```
+   * Apply some function to value in container. `map` for Just
+   * will call the function with value, for `Nothing` return Nothing.
+   * If `map` will return `null` or `undefined` then return `Nothing`.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const zeroDivider = 0
+   * const tenDivide = (n: number): number => n === 0 ? null : 10 / n
+   * const foo = Maybe.of(zeroDivider).map(tenDivide) // Noting
+   *
+   * const nonZeroDivider = 2
+   * const bar = Maybe.of(nonZeroDivider).map(tenDivide) // Just(5)
+   * ```
   */
   map<U>(f: (value: NonNullable<T>) => Nullable<U>): MaybeShape<NonNullable<U>>
 
@@ -46,7 +46,7 @@ export interface MaybeShape<T> {
    * const brokenData = brokenDataMaybe.unwrapOr('This data was broken') // This data was broken')
    * const normalData = Maybe.of(10).unwrapOr('This data was broken') // 10
    * ```
-   */
+   * */
   getOrElse<U>(defaultValue: U): T | U
 
   /**
@@ -96,20 +96,20 @@ export function getOrElse<T, U>(defaultValue: U, maybe?: MaybeShape<T>): (T | U)
 }
 
 /**
-  Create a `Maybe` from any value.
-  To specify that the result should be interpreted as a specific type, you may
-  invoke `Maybe.of` with an explicit type parameter:
-
-  ```ts
-  import { Maybe } from 'monad-maniac'
-
-  const foo = Maybe.of<string>(null) // foo will Nothing
-  const bar = Maybe.of<string>('hello') // bar will Just('hello')
-  ```
-  @typeparam T The type of the item contained in the `Maybe`.
-  @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
+  * Create a `Maybe` from any value.
+  * If value will `null` or `undefined` this become `Nothing()`
+  * else this be `Just(value)`.
+  *
+  * ```ts
+  * import { Maybe } from 'monad-maniac'
+  *
+  * const foo = Maybe.of<string>(null) // foo will Nothing
+  * const bar = Maybe.of<string>('hello') // bar will Just('hello')
+  * ```
+  * @typeparam T The type of the item contained in the `Maybe`.
+  * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
                the result will be `Nothing`; otherwise it will be Just with value with your type.
- */
+  * */
 export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   if (value === undefined || value === null) {
     return new Nothing()
