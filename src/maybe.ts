@@ -38,9 +38,9 @@ export interface MaybeShape<T> {
    * const resultBad = Maybe
    *  .of(100)
    *  .map((x) => x / 2) // 50
-   *  .filter((x) => x > 1000)
+   *  .filter((x) => x > 1000) // Nothing() - next function will be called never
    *  .map((x) => x + 10) // 60
-   *  .chain((x) => x / 3) // 20
+   *  .chain((x) => x / 3) // 20 - actually the function will not be called
    * console.log(result) // undefined
    * ```
    */
@@ -148,15 +148,38 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
  * const mappedFoo = Maybe.map(foo, (x) => x * x) // Just(144)
  * ```
  * */
-export function map<T, U>(f: (value: T) => U, maybe: MaybeShape<T>): T
+export function map<T, U>(f: (value: T) => Nullable<U>, maybe: MaybeShape<T>): MaybeShape<NonNullable<U>>
 /**
  * Just curried `map`.
  *
  * _(a -> b) -> Maybe(a) -> Maybe(b)_
  */
-export function map<T, U>(f: (value: T) => U): (maybe: MaybeShape<T>) => T
-export function map<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): MaybeShape<U> | ((maybe: MaybeShape<T>) => MaybeShape<U>) {
+export function map<T, U>(f: (value: T) => Nullable<U>): (maybe: MaybeShape<T>) => MaybeShape<NonNullable<U>>
+export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): MaybeShape<NonNullable<U>> | ((maybe: MaybeShape<T>) => MaybeShape<NonNullable<U>>) {
   const op = (m: MaybeShape<T>) => m.map(f)
+  return helpers.curry1(op, maybe)
+}
+
+/**
+ * Method like [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain)
+ * but to get maybe and call method `chain` with a function.
+ *
+ * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const foo = Maybe.of(12)
+ * const resultFoo = Maybe.chain(foo, (x) => x * x) // 144
+ * ```
+ * */
+export function chain<T, U>(f: (value: T) => U, maybe: MaybeShape<T>): U | undefined
+/**
+ * Just curried `chain`.
+ *
+ * _(a -> b) -> Maybe(a) -> b_
+ */
+export function chain<T, U>(f: (value: T) => U): (maybe: MaybeShape<T>) => U | undefined
+export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | undefined | ((maybe: MaybeShape<T>) => U | undefined) {
+  const op = (m: MaybeShape<T>) => m.chain(f)
   return helpers.curry1(op, maybe)
 }
 
