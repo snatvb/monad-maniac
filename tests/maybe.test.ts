@@ -56,6 +56,29 @@ describe('Pure functions', () => {
     })
   })
 
+  describe('chain', () => {
+    it('with value', () => {
+      const just = Maybe.of('foo')
+      expect(Maybe.chain(concat('bar'), just)).toBe('foobar')
+    })
+
+    it('with null', () => {
+      const just = Maybe.of(234)
+      const nothing = Maybe.of(null)
+      const nothing2 = Maybe.of(undefined)
+      expect(Maybe.chain(toNothing, just)).toBeUndefined()
+      expect(Maybe.chain(double, nothing)).toBeUndefined()
+      expect(Maybe.chain(double, nothing2)).toBeUndefined()
+    })
+
+    it('carry', () => {
+      const just = Maybe.of('foo')
+      const carried = Maybe.chain(concat('bar'))
+      expect(typeof carried).toBe('function')
+      expect(carried(just)).toBe('foobar')
+    })
+  })
+
   describe('getOrElse', () => {
     it('with value', () => {
       const just = Maybe.of('foo')
@@ -101,21 +124,21 @@ describe('Just and Nothing', () => {
     expect(just.toString()).toBe('Just(5)')
     expect(just.chain(double)).toBe(10)
     expect(just.map(double).chain(double)).toBe(20)
-    expect(just.map(double).map(double).chain(toNothing)).toBe(undefined)
+    expect(just.map(double).map(double).chain(toNothing)).toBeUndefined()
     expect(
       just
         .map(double)
         .map(double)
         .map(toNothing)
         .chain(double)
-    ).toBe(undefined)
+    ).toBeUndefined()
     expect(
       just
         .map(double)
         .map(double)
         .map(toNull)
         .chain(double)
-    ).toBe(undefined)
+    ).toBeUndefined()
   })
 
   it('getOrElse', () => {
