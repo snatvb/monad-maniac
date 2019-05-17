@@ -165,7 +165,7 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
  * import { Maybe } from 'monad-maniac'
  *
  * const foo = Maybe.of(12)
- * const appliedFoo = Maybe.apply(foo, Maybe.of((x) => x * x)) // Just(144)
+ * const appliedFoo = Maybe.apply(Maybe.of((x) => x * x), foo) // Just(144)
  * ```
  * */
 export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe: MaybeShape<T>): ApplicativeResult<T, U>
@@ -269,8 +269,7 @@ export class Just<T> implements MaybeShape<T> {
 
   /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U> {
-    const result = maybe.map((fn) => fn(this.value)).getOrElse(undefined)
-    return of(result)
+    return maybe.map((fn) => fn(this.value))
   }
 }
 
