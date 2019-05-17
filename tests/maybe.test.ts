@@ -1,7 +1,7 @@
 import { Maybe } from '../src'
 
 const double = (x: number): number => x * 2
-const toNothing = (): undefined => undefined
+const toNothing = (): undefined | number => undefined
 
 describe('Pure functions', () => {
 
@@ -58,11 +58,11 @@ describe('Just', () => {
     expect(just.map(double).map(toNothing).getOrElse(null)).toBe(null)
   })
 
-  // it('getOrElse', () => {
-  //   const just = Maybe.of(5)
-  //   expect(just.toString()).toBe('Just(5)')
-  //   expect(just.map(double).getOrElse('No value')).toBe(10)
-  //   expect(just.map(double).map(toNothing).getOrElse('No value')).toBe('No value')
-  //   expect(just.map(double).map(toNothing).getOrElse(null)).toBe(null)
-  // })
+  it('getOrElse', () => {
+    const just = Maybe.of(5)
+    expect(just.toString()).toBe('Just(5)')
+    expect(just.map(double).getOrElse('No value')).toBe(10)
+    expect(just.map(double).map(toNothing).getOrElse('No value')).toBe('No value')
+    expect(just.map(double).map(toNothing).getOrElse(null)).toBe(null)
+  })
 })

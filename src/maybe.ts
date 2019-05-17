@@ -1,5 +1,7 @@
 import * as helpers from './helpers'
 
+type Nullable<T> = T | null | undefined
+
 export interface MaybeShape<T> {
   /**
    Apply some function to value in container. `map` for Just
@@ -17,7 +19,7 @@ export interface MaybeShape<T> {
    const bar = Maybe.of(nonZeroDivider).map(tenDivide) // Just(5)
    ```
   */
-  map<U>(f: (value: T) => U): MaybeShape<U>
+  map<U>(f: (value: NonNullable<T>) => Nullable<U>): MaybeShape<NonNullable<U>>
 
   /**
    * Working like [`MaybeShape.map`](#map) but returns not `Maybe`, but the function result.
@@ -108,11 +110,11 @@ export function getOrElse<T, U>(defaultValue: U, maybe?: MaybeShape<T>): (T | U)
   @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
                the result will be `Nothing`; otherwise it will be Just with value with your type.
  */
-export function of<T>(value: T | null | undefined): MaybeShape<T> {
+export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   if (value === undefined || value === null) {
     return new Nothing()
   } else {
-    return new Just(value)
+    return new Just(value as NonNullable<T>)
   }
 }
 
@@ -140,14 +142,14 @@ export function map<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): MaybeShape
 }
 
 export class Just<T> implements MaybeShape<T> {
-  private value: T
+  private value: NonNullable<T>
 
   constructor(value: T) {
-    this.value = value
+    this.value = value as NonNullable<T>
   }
 
   /** Method implements from [`MaybeShape.map`](../interfaces/_maybe_.maybeshape.html#map) */
-  map<U>(f: (value: T) => U): MaybeShape<U> {
+  map<U>(f: (value: NonNullable<T>) => U): MaybeShape<NonNullable<U>> {
     return of(f(this.value))
   }
 
@@ -183,7 +185,7 @@ export class Just<T> implements MaybeShape<T> {
 
 export class Nothing<T> implements MaybeShape<T> {
   /** Method implements from [`MaybeShape.map`](../interfaces/_maybe_.maybeshape.html#map) */
-  map<U>(_f: (value: T) => U): MaybeShape<U> {
+  map<U>(_f: (value: NonNullable<T>) => U): MaybeShape<NonNullable<U>> {
     return new Nothing()
   }
 
