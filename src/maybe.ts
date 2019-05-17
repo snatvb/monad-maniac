@@ -19,6 +19,10 @@ export interface MaybeShape<T> {
   */
   map<U>(f: (value: T) => U): MaybeShape<U>
 
+  /**
+   * Working like [`MaybeShape.map`](#map) but returns not `Maybe`, but the function result.
+   * If `chain` will call on `Nothing` then return `undefined`.
+   */
   chain<U>(f: (value: T) => U): U | undefined
 
   /** Return true of `Nothing` */
@@ -43,8 +47,29 @@ export interface MaybeShape<T> {
    */
   getOrElse<U>(defaultValue: U): T | U
 
+  /**
+   * Filtering value in `Maybe`. Takes predicate function and
+   * return new `Maybe`. If the function return `false`, then
+   * maybe will `Noting` otherwise `Just`.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const result = Maybe
+   *  .of(10)
+   *  .map((x) => x * x)
+   *  .filter((x) => x > 50) // result will Just(100)
+   *  .filter((x) => x < 90) // result will Nothing()
+   *
+   * console.log(result.toString()) // Nothing()
+   * ```
+   */
   filter(f: (value: T) => boolean): MaybeShape<T>
 
+  /**
+   * Returns `Nothing()` if `Maybe` is `Nothing`, else
+   * `Just(value converted to string)`.
+   */
   toString(): string
 }
 
@@ -141,6 +166,7 @@ export class Just<T> implements MaybeShape<T> {
     return this.value
   }
 
+  /** Method implements from [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
   chain<U>(f: (value: T) => U): U {
     return f(this.value)
   }
@@ -149,6 +175,7 @@ export class Just<T> implements MaybeShape<T> {
     return f(this.value) === false ? new Nothing() : this
   }
 
+  /**  Method implements from [`MaybeShape.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
   toString(): string {
     return `Just(${String(this.value)})`
   }
@@ -175,6 +202,7 @@ export class Nothing<T> implements MaybeShape<T> {
     return defaultValue
   }
 
+  /** Method implements from [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
   chain<U>(_f: (value: T) => U): undefined {
     return undefined
   }
@@ -183,6 +211,7 @@ export class Nothing<T> implements MaybeShape<T> {
     return this
   }
 
+  /**  Method implements from [`MaybeShape.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
   toString(): string {
     return 'Nothing()'
   }
