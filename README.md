@@ -40,7 +40,7 @@ const greeting = `Hello ${user.name}!`
 
 const user = db.find(({ id }) => id === 10)
 // Fine
-const greeting = user ? `Hello ${user.name}!` : 'No one to greeting... :('
+const greeting = user ? `Hello ${user.name}!` : 'No-one to greet... :('
 ```
 Typescript can you help, if you forget to add check, you will notify about that. But if your data have a lot of nested optional fields, you will get the hell out of checks on `null` and `undefined`, maybe other types.
 
@@ -59,15 +59,15 @@ const user = Maybe.of(db.find({ id }) => id === 2)
 // greeting = "Hello, bar!"
 const greeting = user
   .map(({ name }) => `Hello, ${name}!`)
-  .getOrElse('No one to greeting... :(')
+  .getOrElse('No-one to greet... :(')
 
 // ...
 
 const user = Maybe.of(db.find({ id }) => id === 10)
-// greeting = "No one to greeting... :("
+// greeting = "No-one to greet... :("
 const greeting = user
   .map(({ name }) => `Hello, ${name}!`)
-  .getOrElse('No one to greeting... :(')
+  .getOrElse('No-one to greet... :(')
 ```
 
 ### How use it?
