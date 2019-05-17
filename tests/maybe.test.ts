@@ -166,3 +166,58 @@ describe('Just and Nothing', () => {
     })
   })
 })
+
+describe('Other cases', () => {
+  describe('NestedOptional', () => {
+    type NestedOptional = {
+      a: {
+        b?: {
+          c?: string
+        }
+      }
+    }
+    const maybeObject = Maybe.of<NestedOptional>({ a: {} })
+    const maybeObjectFull = Maybe.of<NestedOptional>({ a: { b: { c: 'monad-maniac' } } })
+
+    it('getting exists field', () => {
+      expect(
+        maybeObject
+          .map((obj) => obj.a)
+          .toString()
+      ).toBe('Just([object Object])')
+    })
+    it('getting not exists field and try concat string from value last field', () => {
+      expect(
+        maybeObject
+          .map((obj) => obj.a)
+          .map((obj) => obj.b)
+          .map((obj) => obj.c)
+          .map((str) => `this is ${str}`)
+          .toString()
+      ).toBe('Nothing()')
+    })
+
+    it('getting exists field and try concat string from value last field', () => {
+      expect(
+        maybeObjectFull
+          .map((obj) => obj.a)
+          .map((obj) => obj.b)
+          .map((obj) => obj.c)
+          .map((str) => `this is ${str}`)
+          .toString()
+      ).toBe('Just(this is monad-maniac)')
+    })
+
+    it('getting exists field and try concat string from value last field after filter with false', () => {
+      expect(
+        maybeObjectFull
+          .map((obj) => obj.a)
+          .map((obj) => obj.b)
+          .map((obj) => obj.c)
+          .filter((str) => str.length < 3)
+          .map((str) => `this is ${str}`)
+          .toString()
+      ).toBe('Nothing()')
+    })
+  })
+})
