@@ -1,0 +1,10 @@
+node_modules
+tests
+docs
+scripts
+dist/**/test
+dist/**/node_modules
+
+.vscode
+.travis.yml
+tsconfig.json
