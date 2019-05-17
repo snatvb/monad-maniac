@@ -10,7 +10,8 @@
     "docs": "./scripts/build-docs",
     "build": "yarn clean && yarn ts:all",
     "clean": "rimraf ./*.d.ts ./*.d.ts.map dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tdd": "jest --watch",
+    "test": "jest"
   },
   "keywords": [
     "monad",
@@ -27,6 +28,34 @@
   ],
   "author": "snatvb",
   "license": "UNLICENSED",
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/*"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/index.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "statements": 100,
+        "lines": 100
+      }
+    }
+  },
   "devDependencies": {
     "@types/jest": "24.0.13",
     "jest": "24.8.0",
