@@ -93,6 +93,22 @@ export interface MaybeShape<T> {
    */
   toString(): string
 
+  /**
+   *
+   * @param maybe Getting `Maybe(fn)` and apply function from `Maybe` to
+   * value from current `Maybe`
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   * const just = Maybe.of(5)
+   * const maybeAdd = Maybe.of((x) => x + 1)
+   * const maybeAddNull = Maybe.of(null)
+   *
+   * const resultAdd = just.apply(maybeAdd).toString() // Just(6)
+   * const resultAddToNothing = just.filter((x) => x > 10000).apply(maybeAdd).toString() // Nothing()
+   * const resultAddNull= just.apply(maybeAddNull).toString() // Nothing()
+   * ```
+   */
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>>
 }
 
@@ -226,6 +242,7 @@ export class Just<T> implements MaybeShape<T> {
     return `Just(${String(this.value)})`
   }
 
+  /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
     const result = maybe.map((fn) => fn(this.value)).getOrElse(undefined)
     return of(result)
@@ -267,6 +284,7 @@ export class Nothing<T> implements MaybeShape<T> {
     return 'Nothing()'
   }
 
+  /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
   apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
     return new Nothing()
   }
