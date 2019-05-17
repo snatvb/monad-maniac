@@ -1,0 +1,38 @@
+{
+  "name": "monad-maniac",
+  "version": "0.0.1",
+  "description": "monads with right rules",
+  "scripts": {
+    "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
+    "ts:es": "yarn tsc -p ts/es.tsconfig.json",
+    "ts:typedefs": "yarn tsc -p ts/types.tsconfig.json && mv defs/* . && rmdir defs",
+    "ts:all": "yarn ts:cjs && yarn ts:es && yarn ts:typedefs",
+    "docs": "./scripts/build-docs",
+    "build": "yarn clean && yarn ts:all",
+    "clean": "rimraf ./*.d.ts ./*.d.ts.map dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "monad",
+    "ts",
+    "maybe"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "files": [
+    "*.d.ts",
+    "*.d.ts.map",
+    "dist",
+    "src"
+  ],
+  "author": "snatvb",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/jest": "24.0.13",
+    "jest": "24.8.0",
+    "rimraf": "2.6.3",
+    "ts-jest": "24.0.2",
+    "typedoc": "0.14.2",
+    "typescript": "3.4.5"
+  }
+}

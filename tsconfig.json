@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "declaration": true,
+    "stripInternal": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+
+    "moduleResolution": "node",
+    "baseUrl": ".",
+
+    "sourceRoot": ".",
+    "sourceMap": true,
+  },
+  "include": ["src", "test"],
+  "typedocOptions": {
+    "out": "./docs",
+    "toc": false,
+    "excludePrivate": true,
+    "includes": "./src",
+    "target": "ES6",
+    "theme": "default",
+    "name": "Monad Maniac"
+  }
+}
