@@ -92,6 +92,8 @@ export interface MaybeShape<T> {
    * `Just(value converted to string)`.
    */
   toString(): string
+
+  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>>
 }
 
 /**
@@ -223,6 +225,11 @@ export class Just<T> implements MaybeShape<T> {
   toString(): string {
     return `Just(${String(this.value)})`
   }
+
+  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
+    const result = maybe.map((fn) => fn(this.value)).getOrElse(undefined)
+    return of(result)
+  }
 }
 
 export class Nothing<T> implements MaybeShape<T> {
@@ -258,5 +265,9 @@ export class Nothing<T> implements MaybeShape<T> {
   /**  Method implements from [`MaybeShape.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
   toString(): string {
     return 'Nothing()'
+  }
+
+  apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): MaybeShape<NonNullable<ReturnType<U>>> {
+    return new Nothing()
   }
 }

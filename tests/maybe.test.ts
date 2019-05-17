@@ -167,6 +167,15 @@ describe('Just and Nothing', () => {
     expect(nothing.toString()).toBe('Nothing()')
   })
 
+  it('apply', () => {
+    const just = Maybe.of(5)
+    const maybeDouble = Maybe.of(double)
+    const nothing = Maybe.of(null)
+    expect(just.apply(maybeDouble).map((x) => x + 15).toString()).toBe('Just(25)')
+    expect(just.apply(nothing).map((x) => x + 15).toString()).toBe('Nothing()')
+    expect(nothing.apply(maybeDouble).toString()).toBe('Nothing()')
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)
