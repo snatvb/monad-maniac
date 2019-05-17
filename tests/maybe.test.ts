@@ -95,7 +95,8 @@ describe('Just and Nothing', () => {
         .toString()
     ).toBe('Nothing()')
   })
-  it('map', () => {
+
+  it('chain', () => {
     const just = Maybe.of(5)
     expect(just.toString()).toBe('Just(5)')
     expect(just.chain(double)).toBe(10)
