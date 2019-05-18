@@ -375,30 +375,19 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
   * ```
   * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
   * */
-// export function equals<T, U>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<U>): boolean
-// /**
-//  * Just curried `equals`.
-//  *
-//  * _Maybe(a) -> Maybe(b) -> boolean_
-//  */
-// export function equals<T, U>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<U>) => boolean
-// export function equals<T, U>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<U>): boolean {
-//   const op = (maybeB: MaybeShape<U>) => {
-//     if (maybeA.isNothing()) {
-//       return maybeB.isNothing()
-//     }
-
-//     if (maybeB.isNothing()) {
-//       return false
-//     }
-
-//     return maybeA.caseOf<boolean>({
-//       Just: (x) => x === maybeB.getOrElse(undefined),
-//       Nothing: () => maybeB.isNothing()
-//     })
-//   }
-//   return helpers.curry1(op, maybeB)
-// }
+export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean
+/**
+ * Just curried `equals`.
+ *
+ * _Maybe(a) -> Maybe(b) -> boolean_
+ */
+export function equals<T>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<T>) => boolean
+export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
+  const op = (maybeB: MaybeShape<T>): boolean => {
+    return maybeA.equalsMaybe(maybeB)
+  }
+  return helpers.curry1(op, maybeB)
+}
 
 export class Just<T> implements MaybeShape<T> {
   private value: NonNullable<T>
