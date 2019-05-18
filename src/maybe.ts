@@ -120,6 +120,38 @@ export interface MaybeShape<T> {
    */
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
 
+  /**
+   * If need unwrap `Maybe` and call some function and save type without `null` and `undefined`
+   * then use caseOf.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const brokenDataMaybe = Maybe.of<number>(null)
+   * const normalDataMaybe = Maybe.of(10)
+   *
+   * const mather: Maybe.CaseOf<number> = {
+   *  Just: (x) => x * x,
+   *  Nothing: () => -1,
+   * }
+   *
+   * const unwrappedNormal = normalDataMaybe.caseOf(mather) // 100
+   * const unwrappedBroken = normalDataMaybe.caseOf(mather) // -1
+   *
+   * // More example:
+   *
+   * brokenDataMaybe.caseOf({
+    *  Just: (x) => Maybe.of(x * x),
+    *  Nothing: () => Maybe.of(-1),
+   * }).map((x) => x ^ 2) // Just(1)
+   *
+   * unwrappedNormal.caseOf({
+    *  Just: (x) => Maybe.of(x * x),
+    *  Nothing: () => Maybe.of(-1),
+   * }).map((x) => x ^ 2) // Nothing
+   * ```
+   * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
+   */
   caseOf<U>(mather: CaseOf<T, U>): U
 
   join(): JoinMaybe<T>
@@ -290,10 +322,12 @@ export class Just<T> implements MaybeShape<T> {
     return maybe.map((fn) => fn(this.value))
   }
 
+  /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
   caseOf<U>(mather: CaseOf<T, U>): U {
     return mather.Just(this.value)
   }
 
+  /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
   join(): JoinMaybe<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
@@ -339,10 +373,12 @@ export class Nothing<T> implements MaybeShape<T> {
     return new Nothing()
   }
 
+  /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
   caseOf<U>(mather: CaseOf<T, U>): U {
     return mather.Nothing()
   }
 
+  /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
   join(): JoinMaybe<T> {
     return new Nothing() as JoinMaybe<T>
   }
