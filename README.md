@@ -209,6 +209,29 @@ const divided = just.chain((x) => x / 2) // 5
 const none = just.chain((x) => x > 10000 ? x / 2 : undefined) // undefined
 ```
 
+#### filter
+Function `filter` takes predicate and returns `Just` if will be returned `true` and `Nothing` otherwise.
+
+```ts
+import { Maybe } from 'monad-maniac'
+
+const just = Maybe.of(10)
+const divided = just.map((x) => 20 / x) // Just(2) - ok
+
+const dividedNaN = Maybe.of(0).map((x) => 20 / x) // Just(NaN)... :worried:
+
+// With filter:
+
+const dividedNormally = Maybe
+  .of(0)
+  .filter((x) => x !== 0)
+  .map((x) => 20 / x) // Nothing() - great!
+const dividedNormallyJust = Maybe
+  .of(2)
+  .filter((x) => x !== 0)
+  .map((x) => 20 / x) // Just(10) - great!
+```
+
 [travis-image]: https://travis-ci.org/snatvb/monad-maniac.svg?style=flat-square&branch=master
 [travis-url]: https://travis-ci.org/snatvb/monad-maniac
 [npm-image]: https://img.shields.io/npm/v/monad-maniac.svg?style=flat-square
