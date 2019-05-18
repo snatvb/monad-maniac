@@ -381,7 +381,7 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
 /**
  * Just curried `equals`.
  *
- * _Maybe(a) -> Maybe(b) -> boolean_
+ * _Maybe(a) -> Maybe(a) -> boolean_
  */
 export function equals<T>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<T>) => boolean
 export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
