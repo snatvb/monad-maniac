@@ -178,6 +178,18 @@ export interface MaybeShape<T> {
    * */
   join(): JoinMaybe<T>
 
+    /**
+   * Checking equals value from `Maybe` and what in parameter.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const just = Maybe.of(10)
+   *
+   * const isSame = equalsValue.equalsValue(10) // true
+   * const isEqual = equalsValue.equalsValue(15) // false
+   * ```
+   * */
   equalsValue(value: Nullable<T>): boolean
 
   equals(value: MaybeShape<T>): boolean
