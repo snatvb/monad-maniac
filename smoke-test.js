@@ -12,7 +12,7 @@ const writeFile = promisify(fs.writeFile);
 const assert = require('assert');
 
 const code = `
-const { Maybe } = require('monad-maniac');
+const { Maybe } = require('monad-maniac')
 
 const double = (x) => x * 2
 const just = Maybe.of(10)

@@ -3,7 +3,7 @@ node_js:
   - "lts/*"
 
 cache: yarn
-script: yarn tests
+script: yarn test && yarn build && yarn smoke-test
 
 branches:
   only:
