@@ -1,4 +1,8 @@
 # Monads
+
+[![Build status][travis-image]][travis-url]
+[![NPM version][npm-image]][npm-url]
+
 You finally made it. You stepped through the looking glass. You learned functional programming. You mastered currying and composition, and followed the path of functional purity. And gradually, you notice a change in the attitude of the other programmers. There’s ever-so-slightly less disdain in their voice when you talk to them. Every so often you’ll get a little nod when you happen to mention immutable data structures. You’ve begun to earn their respect. And yet…
 
 There’s something they won’t talk about. When they think you’re not in earshot, every so often, you’ll overhear the word ‘monad’ discussed in hushed tones. But as soon as they notice you’re there, they change the subject. One day, you pluck up the courage to ask someone. “What’s this monad thing I keep hearing about?” The other programmer just looks at you. After an awkward silence she simply says “I can’t talk about it”. So you ask another programmer and she replies “Maybe when you’ve learned Haskell.” She walks away sadly, shaking her head.
@@ -82,3 +86,8 @@ const maybeBaz = Maybe.of(undefined) // Nothing()
 ```
 
 To be continue...
+
+[travis-image]: https://travis-ci.org/snatvb/monad-maniac.svg?style=flat-square
+[travis-url]: https://travis-ci.org/snatvb/monad-maniac
+[npm-image]: https://img.shields.io/npm/v/monad-maniac.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/monad-maniac
