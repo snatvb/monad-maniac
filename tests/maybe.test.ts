@@ -187,6 +187,25 @@ describe('Pure functions', () => {
       expect(Maybe.equals(just)(notSameJust)).toBeFalsy()
     })
   })
+
+  describe('equalsValue', () => {
+    it('with value and null', () => {
+      const value = 'foo'
+      const just = Maybe.of('foo')
+      const nothing = Maybe.of<string>(null)
+      expect(Maybe.equalsValue(value, just)).toBeTruthy()
+      expect(Maybe.equalsValue('bar', just)).toBeFalsy()
+      expect(Maybe.equalsValue(undefined, nothing)).toBeTruthy()
+      expect(Maybe.equalsValue('foo', Maybe.of<string>(null))).toBeFalsy()
+    })
+
+    it('carried', () => {
+      const value = 'foo'
+      const just = Maybe.of('foo')
+      expect(Maybe.equalsValue(value)(just)).toBeTruthy()
+      expect(Maybe.equalsValue('bar')(just)).toBeFalsy()
+    })
+  })
 })
 
 describe('Just and Nothing', () => {
@@ -311,11 +330,13 @@ describe('Just and Nothing', () => {
   it('equals', () => {
     const just = Maybe.of(5)
     const sameJust = Maybe.of(5)
+    const notSameJust = Maybe.of(15)
     const nothing = Maybe.of<number>(null)
     expect(just.toString()).toBe('Just(5)')
     expect(sameJust.toString()).toBe('Just(5)')
     expect(just.equals(sameJust)).toBeTruthy()
     expect(just.equals(nothing)).toBeFalsy()
+    expect(just.equals(notSameJust)).toBeFalsy()
     expect(just.map(double).equals(sameJust)).toBeFalsy()
     expect(just.map(toNothing).equals(sameJust)).toBeFalsy()
     expect(just.map(toNothing).equals(nothing)).toBeTruthy()
