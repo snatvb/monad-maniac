@@ -55,7 +55,7 @@ export interface MaybeShape<T> {
    */
   chain<U>(f: (value: T) => U): U | undefined
 
-  /** Return true of `Nothing` */
+  /** Return true if `Nothing` */
   isNothing(): boolean
 
   /** Return true if `Just` */
@@ -121,8 +121,8 @@ export interface MaybeShape<T> {
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
 
   /**
-   * If need unwrap `Maybe` and call some function and save type without `null` and `undefined`
-   * then use caseOf.
+   * If need unwrap `Maybe` and call some function and save type without
+   * `null` and `undefined` then use caseOf.
    *
    * ```ts
    * import { Maybe } from 'monad-maniac'
@@ -155,8 +155,9 @@ export interface MaybeShape<T> {
   caseOf<U>(mather: CaseOf<T, U>): U
 
   /**
-   * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`
-   *   _Maybe(Maybe a) -> Maybe a _
+   * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
+   *
+   *   _Maybe(Maybe a) -> Maybe a_
    *
    * ```ts
    * import { Maybe } from 'monad-maniac'
@@ -199,8 +200,8 @@ export function getOrElse<T, U>(defaultValue: U, maybe?: MaybeShape<T>): (T | U)
   * ```ts
   * import { Maybe } from 'monad-maniac'
   *
-  * const foo = Maybe.of<string>(null) // foo will Nothing
-  * const bar = Maybe.of<string>('hello') // bar will Just('hello')
+  * const foo = Maybe.of<string>(null) // foo will Nothing()
+  * const bar = Maybe.of<string>('hello') // bar will Just(hello)
   * ```
   * @typeparam T The type of the item contained in the `Maybe`.
   * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
@@ -216,7 +217,9 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
 
   /**
    * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
-   *   _Maybe(Maybe a) -> Maybe a _
+   *
+   *   _Maybe(Maybe a) -> Maybe a_
+   *
    * Method like [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join)
    *
    * ```ts
