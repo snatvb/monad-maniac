@@ -214,6 +214,21 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   }
 }
 
+  /**
+   * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
+   *   _Maybe(Maybe a) -> Maybe a _
+   * Method like [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join)
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const just = Maybe.of(10)
+   * const nestedJust = Maybe.of(just) // Just(Just(10))
+   *
+   * const backJust = Maybe.join(nestedJust) // Just(10)
+   * const backMoreJust = Maybe.join(backJust) // Nothing
+   * ```
+   * */
 export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
   return value.caseOf({
     Just: (x) => x instanceof Just ? x : new Nothing() as JoinMaybe<T>,
