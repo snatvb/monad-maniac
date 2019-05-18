@@ -77,6 +77,7 @@ const greeting = user
 
 ### How use it?
 
+#### of
 `of` - factory function for `Maybe`.
 ```ts
 import { Maybe } from 'monad-maniac'
@@ -86,7 +87,127 @@ const maybeBar = Maybe.of(null) // Nothing()
 const maybeBaz = Maybe.of(undefined) // Nothing()
 ```
 
-To be continue...
+#### map
+`map` - this is method or pure function `Maybe`. When data maybe is `null` or `undefined`
+and with the data need to do something, usually used a lot of checks. With `Maybe` you can forget about it.
+```ts
+import { Maybe } from 'monad-maniac'
+
+type Data = {
+  message?: {
+    sender?: {
+      name?: string
+    }
+  }
+}
+
+const maybeData = Maybe.of<Data>({
+  message: {
+    sender: {
+      name: 'MR. Holmes',
+    }
+  }
+})
+
+const prop = <T, K extends keyof T>(key: K) => (obj: T) => obj[key]
+
+const heyMister: string = maybeData
+  .map(prop('message'))
+  .map(prop('sender'))
+  .map(prop('name'))
+  .caseOf({
+    Just: (name) => `Hey! ${name}!`,
+    Nothing: () => 'Unknown sender'
+  })
+
+console.log(heyMister) // Hey! MR. Holmes!
+```
+```ts
+import { Maybe } from 'monad-maniac'
+
+type Data = {
+  message?: {
+    sender?: {
+      name?: string
+    }
+  }
+}
+
+const maybeData = Maybe.of<Data>({})
+
+const prop = <T, K extends keyof T>(key: K) => (obj: T) => obj[key]
+
+const heyMister: string = maybeData
+  .map(prop('message'))
+  .map(prop('sender'))
+  .map(prop('name'))
+  .caseOf({
+    Just: (name) => `Hey! ${name}!`,
+    Nothing: () => 'Unknown sender'
+  })
+
+console.log(heyMister) // Unknown sender
+```
+
+#### caseOf && getOrElse
+This functions serve one purpose - unwrapping `Maybe`.
+```ts
+import { Maybe } from 'monad-maniac'
+
+const just = Maybe.of(10)
+const nothing = Maybe.of<number>(null)
+
+const square = (x: number): number => x * x
+
+// getOrElse
+const justResult: ?number = just.map(square).getOrElse(undefined) // 100
+const justMoreResult: number = just.map(square).getOrElse(0) // 100
+const nothingResult: number = nothing.map(square).getOrElse(0) // 0
+const nothingMoreResult: ?number = nothing
+  .map(square)
+  .getOrElse(undefined) // undefined
+
+// caseOf
+const justUnwrapped: number = just.caseOf({
+  Just: square,
+  Nothing: Infinity,
+}) // 100
+const nothingUnwrapped: number = nothing.caseOf({
+  Just: square,
+  Nothing: Infinity,
+}) // Infinity
+```
+
+#### join
+If need to get `Maybe` from `Maybe` the function is irreplaceable.
+
+```ts
+import { Maybe } from 'monad-maniac'
+
+const just = Maybe.of(10)
+const maybeJust = just.map((x) => Maybe.of(x + 5)) // Just(Just(15))
+const justFifteen = maybeJust.join() // Just(15)
+
+// ...
+maybeJust
+  .join() // Just(15)
+  .join() // Nothing()
+  .join() // Nothing()
+  .join() // Nothing()
+  .join() // Nothing()
+  .join() // Nothing()
+```
+
+#### chain
+This function like `Maybe.map` but returns not `Maybe` but what will be result of callback function.
+
+```ts
+import { Maybe } from 'monad-maniac'
+
+const just = Maybe.of(10)
+const divided = just.chain((x) => x / 2) // 5
+const none = just.chain((x) => x > 10000 ? x / 2 : undefined) // undefined
+```
 
 [travis-image]: https://travis-ci.org/snatvb/monad-maniac.svg?style=flat-square&branch=master
 [travis-url]: https://travis-ci.org/snatvb/monad-maniac
