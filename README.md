@@ -1,6 +1,7 @@
 # Monads
 
 [![Build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
 [![NPM version][npm-image]][npm-url]
 
 You finally made it. You stepped through the looking glass. You learned functional programming. You mastered currying and composition, and followed the path of functional purity. And gradually, you notice a change in the attitude of the other programmers. There’s ever-so-slightly less disdain in their voice when you talk to them. Every so often you’ll get a little nod when you happen to mention immutable data structures. You’ve begun to earn their respect. And yet…
@@ -91,3 +92,5 @@ To be continue...
 [travis-url]: https://travis-ci.org/snatvb/monad-maniac
 [npm-image]: https://img.shields.io/npm/v/monad-maniac.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/monad-maniac
+[coveralls-image]: https://img.shields.io/coveralls/snatvb/monad-maniac.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/snatvb/monad-maniac
