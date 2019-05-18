@@ -498,10 +498,12 @@ export class Just<T> implements MaybeShape<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
 
+  /** Method implements from [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return this.value === value
   }
 
+  /** Method implements from [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
   equals(value: MaybeShape<T>): boolean {
     return value.caseOf({
       Just: (x) => x === this.value,
@@ -560,10 +562,12 @@ export class Nothing<T> implements MaybeShape<T> {
     return new Nothing() as JoinMaybe<T>
   }
 
+  /** Method implements from [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return value === undefined || value === null
   }
 
+  /** Method implements from [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
   equals(value: MaybeShape<T>): boolean {
     return value.caseOf({
       Just: () => false,
