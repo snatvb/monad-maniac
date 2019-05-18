@@ -299,6 +299,17 @@ describe('Just and Nothing', () => {
     expect(just.map(toNothing).equals(nothing)).toBeTruthy()
   })
 
+  it('equalsValue', () => {
+    const value = 5
+    const just = Maybe.of(5)
+    const nothing = Maybe.of<number>(null)
+    expect(just.toString()).toBe('Just(5)')
+    expect(just.equalsValue(value)).toBeTruthy()
+    expect(just.equalsValue(10)).toBeFalsy()
+    expect(nothing.equalsValue(5)).toBeFalsy()
+    expect(nothing.equalsValue(null)).toBeTruthy()
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)

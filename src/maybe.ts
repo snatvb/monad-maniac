@@ -178,7 +178,7 @@ export interface MaybeShape<T> {
    * */
   join(): JoinMaybe<T>
 
-  equalsValue(value: T): boolean
+  equalsValue(value: Nullable<T>): boolean
 
   equals(value: MaybeShape<T>): boolean
 }
@@ -474,7 +474,7 @@ export class Just<T> implements MaybeShape<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
 
-  equalsValue(value: T): boolean {
+  equalsValue(value: Nullable<T>): boolean {
     return this.value === value
   }
 
@@ -536,7 +536,7 @@ export class Nothing<T> implements MaybeShape<T> {
     return new Nothing() as JoinMaybe<T>
   }
 
-  equalsValue(value: T): boolean {
+  equalsValue(value: Nullable<T>): boolean {
     return value === undefined || value === null
   }
 
