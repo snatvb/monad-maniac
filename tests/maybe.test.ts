@@ -115,6 +115,97 @@ describe('Pure functions', () => {
       expect(Maybe.getOrElse('none', nothing2)).toBe('none')
     })
   })
+
+  describe('join', () => {
+    it('with value', () => {
+      const just = Maybe.of('foo')
+      const nestedJust = Maybe.of(just)
+      const resultJust = Maybe.join(nestedJust)
+      expect(nestedJust.toString()).toBe('Just(Just(foo))')
+      expect(resultJust.toString()).toBe('Just(foo)')
+      expect(Maybe.join(resultJust).toString()).toBe('Nothing()')
+    })
+
+    it('with null', () => {
+      const nestedNothing = Maybe.of(Maybe.of<string>(null))
+      const resultNothing = Maybe.join(nestedNothing)
+      expect(nestedNothing.toString()).toBe('Just(Nothing())')
+      expect(resultNothing.toString()).toBe('Nothing()')
+      expect(Maybe.join(resultNothing).toString()).toBe('Nothing()')
+    })
+  })
+
+  describe('caseOf', () => {
+    const caseOfMather: Maybe.CaseOf<number, number> = {
+      Just: (x) => x + 5,
+      Nothing: () => 0,
+    }
+
+    it('with value', () => {
+      const just = Maybe.of(5).map(double)
+      expect(Maybe.caseOf(caseOfMather, just)).toBe(15)
+      expect(Maybe.caseOf(caseOfMather, just.map(double))).toBe(25)
+    })
+
+    it('with null', () => {
+      const justToNothing = Maybe
+        .of(5)
+        .map(double)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+      const nothing = Maybe.of<number>(null)
+      expect(Maybe.caseOf(caseOfMather, justToNothing)).toBe(0)
+      expect(Maybe.caseOf(caseOfMather, nothing)).toBe(0)
+    })
+
+    it('carry', () => {
+      const just = Maybe.of(5).map(double)
+      expect(Maybe.caseOf(caseOfMather)(just)).toBe(15)
+      expect(typeof Maybe.caseOf(caseOfMather)).toBe('function')
+    })
+  })
+
+  describe('equals', () => {
+    it('with value and null', () => {
+      const just = Maybe.of('foo')
+      const sameJust = Maybe.of('foo')
+      const notSameJust = Maybe.of('bar')
+      const nothing = Maybe.of<string>(null)
+      expect(Maybe.equals(just, sameJust)).toBeTruthy()
+      expect(Maybe.equals(just, notSameJust)).toBeFalsy()
+      expect(Maybe.equals(just, nothing)).toBeFalsy()
+      expect(Maybe.equals(Maybe.of<string>(null), nothing)).toBeTruthy()
+      expect(Maybe.equals(Maybe.of<string>(null), just)).toBeFalsy()
+    })
+
+    it('carried', () => {
+      const just = Maybe.of('foo')
+      const sameJust = Maybe.of('foo')
+      const notSameJust = Maybe.of('bar')
+      expect(Maybe.equals(just)(sameJust)).toBeTruthy()
+      expect(Maybe.equals(just)(notSameJust)).toBeFalsy()
+    })
+  })
+
+  describe('equalsValue', () => {
+    it('with value and null', () => {
+      const value = 'foo'
+      const just = Maybe.of('foo')
+      const nothing = Maybe.of<string>(null)
+      expect(Maybe.equalsValue(value, just)).toBeTruthy()
+      expect(Maybe.equalsValue('bar', just)).toBeFalsy()
+      expect(Maybe.equalsValue(undefined, nothing)).toBeTruthy()
+      expect(Maybe.equalsValue('foo', Maybe.of<string>(null))).toBeFalsy()
+    })
+
+    it('carried', () => {
+      const value = 'foo'
+      const just = Maybe.of('foo')
+      expect(Maybe.equalsValue(value)(just)).toBeTruthy()
+      expect(Maybe.equalsValue('bar')(just)).toBeFalsy()
+    })
+  })
 })
 
 describe('Just and Nothing', () => {
@@ -197,6 +288,69 @@ describe('Just and Nothing', () => {
     expect(just.apply(maybeDouble).map((x) => x + 15).toString()).toBe('Just(25)')
     expect(just.apply(nothing).map((x) => x + 15).toString()).toBe('Nothing()')
     expect(nothing.apply(maybeDouble).toString()).toBe('Nothing()')
+  })
+
+  it('caseOf', () => {
+    const just = Maybe.of(5)
+    expect(just.toString()).toBe('Just(5)')
+    const caseOfMather: Maybe.CaseOf<number, number> = {
+      Just: (x) => x + 5,
+      Nothing: () => 0,
+    }
+    expect(just.map(double).caseOf(caseOfMather)).toBe(15)
+    expect(
+      just
+        .map(double)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+        .caseOf(caseOfMather)
+    ).toBe(0)
+  })
+
+  it('join', () => {
+    const just = Maybe.of(5)
+    const nestedJust = Maybe.of(just)
+    const joinedJust = Maybe
+      .of(Maybe.of(nestedJust))
+      .join()
+      .join()
+      .join()
+    const nothing = Maybe.of<number>(null)
+    const nestedNothing = Maybe.of(nothing)
+    expect(just.toString()).toBe('Just(5)')
+    expect(joinedJust.toString()).toBe('Just(5)')
+    expect(nestedJust.toString()).toBe('Just(Just(5))')
+    expect(nestedJust.join().toString()).toBe('Just(5)')
+    expect(just.join().toString()).toBe('Nothing()')
+    expect(nothing.join().toString()).toBe('Nothing()')
+    expect(nestedNothing.join().toString()).toBe('Nothing()')
+  })
+
+  it('equals', () => {
+    const just = Maybe.of(5)
+    const sameJust = Maybe.of(5)
+    const notSameJust = Maybe.of(15)
+    const nothing = Maybe.of<number>(null)
+    expect(just.toString()).toBe('Just(5)')
+    expect(sameJust.toString()).toBe('Just(5)')
+    expect(just.equals(sameJust)).toBeTruthy()
+    expect(just.equals(nothing)).toBeFalsy()
+    expect(just.equals(notSameJust)).toBeFalsy()
+    expect(just.map(double).equals(sameJust)).toBeFalsy()
+    expect(just.map(toNothing).equals(sameJust)).toBeFalsy()
+    expect(just.map(toNothing).equals(nothing)).toBeTruthy()
+  })
+
+  it('equalsValue', () => {
+    const value = 5
+    const just = Maybe.of(5)
+    const nothing = Maybe.of<number>(null)
+    expect(just.toString()).toBe('Just(5)')
+    expect(just.equalsValue(value)).toBeTruthy()
+    expect(just.equalsValue(10)).toBeFalsy()
+    expect(nothing.equalsValue(5)).toBeFalsy()
+    expect(nothing.equalsValue(null)).toBeTruthy()
   })
 
   describe('Just', () => {
