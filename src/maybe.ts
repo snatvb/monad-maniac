@@ -377,7 +377,7 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
   * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
   * ```
   * */
-export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean
+export function equals<T>(maybeA: MaybeShape<T>, maybeB: MaybeShape<T>): boolean
 /**
  * Just curried `equals`.
  *
@@ -404,7 +404,7 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
   * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
   * ```
   * */
-export function equalsValue<T>(value: T, maybe?: MaybeShape<T>): boolean
+export function equalsValue<T>(value: T, maybe: MaybeShape<T>): boolean
 /**
  * Just curried `equalsValue`.
  *

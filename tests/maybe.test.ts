@@ -165,6 +165,28 @@ describe('Pure functions', () => {
       expect(typeof Maybe.caseOf(caseOfMather)).toBe('function')
     })
   })
+
+  describe('equals', () => {
+    it('with value and null', () => {
+      const just = Maybe.of('foo')
+      const sameJust = Maybe.of('foo')
+      const notSameJust = Maybe.of('bar')
+      const nothing = Maybe.of<string>(null)
+      expect(Maybe.equals(just, sameJust)).toBeTruthy()
+      expect(Maybe.equals(just, notSameJust)).toBeFalsy()
+      expect(Maybe.equals(just, nothing)).toBeFalsy()
+      expect(Maybe.equals(Maybe.of<string>(null), nothing)).toBeTruthy()
+      expect(Maybe.equals(Maybe.of<string>(null), just)).toBeFalsy()
+    })
+
+    it('carried', () => {
+      const just = Maybe.of('foo')
+      const sameJust = Maybe.of('foo')
+      const notSameJust = Maybe.of('bar')
+      expect(Maybe.equals(just)(sameJust)).toBeTruthy()
+      expect(Maybe.equals(just)(notSameJust)).toBeFalsy()
+    })
+  })
 })
 
 describe('Just and Nothing', () => {
