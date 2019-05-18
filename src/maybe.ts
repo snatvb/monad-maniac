@@ -365,15 +365,17 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
 
 
 /**
-  * but to get maybe and call method `caseOf` with a function.
+ * Method like [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals)
+ * but to get maybe and call method `equals` with a function.
   *
   * ```ts
   * import { Maybe } from 'monad-maniac'
   *
   * const firstDataMaybe = Maybe.of(10)
   * const secondDataMaybe = Maybe.of(10)
+  *
+  * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
   * ```
-  * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
   * */
 export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean
 /**
