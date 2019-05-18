@@ -214,6 +214,13 @@ export interface MaybeShape<T> {
  * but to get maybe and call method `getOrElse` with a function.
  *
  * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const just = Maybe.of(10)
+ * const nothing = Maybe.of<number>(null)
+ *
+ * const normal = Maybe.getOrElse(-1, just) // 10
+ * const bad = Maybe.getOrElse(-1, nothing) // -1
  * ```
  * */
 export function getOrElse<T, U>(defaultValue: U, maybe: MaybeShape<T>): T | U
