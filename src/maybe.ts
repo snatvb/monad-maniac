@@ -293,6 +293,50 @@ export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): 
 }
 
 /**
+ * Method like [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof)
+ * but to get maybe and call method `caseOf` with a function.
+ *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const brokenDataMaybe = Maybe.of<number>(null)
+   * const normalDataMaybe = Maybe.of(10)
+   *
+   * const mather: Maybe.CaseOf<number> = {
+   *  Just: (x) => x * x,
+   *  Nothing: () => -1,
+   * }
+   *
+   * const unwrappedNormal = Maybe.caseOf(mather, brokenDataMaybe) // 100
+   * const unwrappedBroken = Maybe.caseOf(mather, normalDataMaybe) // -1
+   *
+   * // More example:
+   *
+   * brokenDataMaybe.caseOf({
+   *  Just: (x) => Maybe.of(x * x),
+   *  Nothing: () => Maybe.of(-1),
+   * }).map((x) => x ^ 2) // Just(1)
+   *
+   * unwrappedNormal.caseOf({
+   *  Just: (x) => Maybe.of(x * x),
+   *  Nothing: () => Maybe.of(-1),
+   * }).map((x) => x ^ 2) // Nothing
+   * ```
+   * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
+ * */
+export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe: MaybeShape<T>): U
+/**
+ * Just curried `caseOf`.
+ *
+ * _(a -> b) -> Maybe(a) -> Maybe(b)_
+ */
+export function caseOf<T, U>(matcher: CaseOf<T, U>): (maybe: MaybeShape<T>) => U
+export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: MaybeShape<T>): U | ((maybe: MaybeShape<T>) => U) {
+  const op = (m: MaybeShape<T>) => m.caseOf(matcher)
+  return helpers.curry1(op, maybe)
+}
+
+/**
  * Method like [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain)
  * but to get maybe and call method `chain` with a function.
  *
