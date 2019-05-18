@@ -286,6 +286,19 @@ describe('Just and Nothing', () => {
     expect(nestedNothing.join().toString()).toBe('Nothing()')
   })
 
+  it('equals', () => {
+    const just = Maybe.of(5)
+    const sameJust = Maybe.of(5)
+    const nothing = Maybe.of<number>(null)
+    expect(just.toString()).toBe('Just(5)')
+    expect(sameJust.toString()).toBe('Just(5)')
+    expect(just.equals(sameJust)).toBeTruthy()
+    expect(just.equals(nothing)).toBeFalsy()
+    expect(just.map(double).equals(sameJust)).toBeFalsy()
+    expect(just.map(toNothing).equals(sameJust)).toBeFalsy()
+    expect(just.map(toNothing).equals(nothing)).toBeTruthy()
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)
