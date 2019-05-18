@@ -177,6 +177,8 @@ export interface MaybeShape<T> {
    * ```
    * */
   join(): JoinMaybe<T>
+
+  equals(value: T): boolean
 }
 
 /**
@@ -261,7 +263,7 @@ export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<
 /**
  * Just curried `apply`.
  *
- * _(a -> b) -> Maybe(a) -> Maybe(b)_
+ * _Maybe(a -> b) -> Maybe(a) -> Maybe(b)_
  */
 export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>): (maybe: MaybeShape<T>) => ApplicativeResult<T, U>
 export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe?: MaybeShape<T>): ApplicativeResult<T, U> | ((maybe: MaybeShape<T>) => ApplicativeResult<T, U>) {
@@ -328,7 +330,7 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe: MaybeShape<T>): U
 /**
  * Just curried `caseOf`.
  *
- * _(a -> b) -> Maybe(a) -> Maybe(b)_
+ * _CaseOf a b -> Maybe(a) -> b_
  */
 export function caseOf<T, U>(matcher: CaseOf<T, U>): (maybe: MaybeShape<T>) => U
 export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: MaybeShape<T>): U | ((maybe: MaybeShape<T>) => U) {
@@ -358,6 +360,43 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
   const op = (m: MaybeShape<T>) => m.chain(f)
   return helpers.curry1(op, maybe)
 }
+
+
+/**
+  * but to get maybe and call method `caseOf` with a function.
+  *
+  * ```ts
+  * import { Maybe } from 'monad-maniac'
+  *
+  * const firstDataMaybe = Maybe.of(10)
+  * const secondDataMaybe = Maybe.of(10)
+  * ```
+  * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
+  * */
+// export function equals<T, U>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<U>): boolean
+// /**
+//  * Just curried `equals`.
+//  *
+//  * _Maybe(a) -> Maybe(b) -> boolean_
+//  */
+// export function equals<T, U>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<U>) => boolean
+// export function equals<T, U>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<U>): boolean {
+//   const op = (maybeB: MaybeShape<U>) => {
+//     if (maybeA.isNothing()) {
+//       return maybeB.isNothing()
+//     }
+
+//     if (maybeB.isNothing()) {
+//       return false
+//     }
+
+//     return maybeA.caseOf<boolean>({
+//       Just: (x) => x === maybeB.getOrElse(undefined),
+//       Nothing: () => maybeB.isNothing()
+//     })
+//   }
+//   return helpers.curry1(op, maybeB)
+// }
 
 export class Just<T> implements MaybeShape<T> {
   private value: NonNullable<T>
@@ -414,6 +453,10 @@ export class Just<T> implements MaybeShape<T> {
   join(): JoinMaybe<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
+
+  equals(value: T): boolean {
+    return this.value === value
+  }
 }
 
 export class Nothing<T> implements MaybeShape<T> {
@@ -464,5 +507,9 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
   join(): JoinMaybe<T> {
     return new Nothing() as JoinMaybe<T>
+  }
+
+  equals(value: T): boolean {
+    return value === undefined || value === null
   }
 }
