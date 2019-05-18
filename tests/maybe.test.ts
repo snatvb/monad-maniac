@@ -115,6 +115,25 @@ describe('Pure functions', () => {
       expect(Maybe.getOrElse('none', nothing2)).toBe('none')
     })
   })
+
+  describe('join', () => {
+    it('with value', () => {
+      const just = Maybe.of('foo')
+      const nestedJust = Maybe.of(just)
+      const resultJust = Maybe.join(nestedJust)
+      expect(nestedJust.toString()).toBe('Just(Just(foo))')
+      expect(resultJust.toString()).toBe('Just(foo)')
+      expect(Maybe.join(resultJust).toString()).toBe('Nothing()')
+    })
+
+    it('with null', () => {
+      const nestedNothing = Maybe.of(Maybe.of<string>(null))
+      const resultNothing = Maybe.join(nestedNothing)
+      expect(nestedNothing.toString()).toBe('Just(Nothing())')
+      expect(resultNothing.toString()).toBe('Nothing()')
+      expect(Maybe.join(resultNothing).toString()).toBe('Nothing()')
+    })
+  })
 })
 
 describe('Just and Nothing', () => {

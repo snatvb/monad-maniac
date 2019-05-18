@@ -119,6 +119,8 @@ export interface MaybeShape<T> {
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
 
   caseOf<U>(mather: CaseOf<T, U>): U
+
+  // join
 }
 
 /**
@@ -162,6 +164,14 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   } else {
     return new Just(value as NonNullable<T>)
   }
+}
+
+type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
+export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
+  return value.caseOf({
+    Just: (x) => x instanceof Just ? x : new Nothing() as JoinMaybe<T>,
+    Nothing: () => new Nothing() as JoinMaybe<T>
+  }) as JoinMaybe<T>
 }
 
 /**
