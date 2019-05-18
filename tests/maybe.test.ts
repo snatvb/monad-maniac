@@ -134,6 +134,37 @@ describe('Pure functions', () => {
       expect(Maybe.join(resultNothing).toString()).toBe('Nothing()')
     })
   })
+
+  describe('caseOf', () => {
+    const caseOfMather: Maybe.CaseOf<number, number> = {
+      Just: (x) => x + 5,
+      Nothing: () => 0,
+    }
+
+    it('with value', () => {
+      const just = Maybe.of(5).map(double)
+      expect(Maybe.caseOf(caseOfMather, just)).toBe(15)
+      expect(Maybe.caseOf(caseOfMather, just.map(double))).toBe(25)
+    })
+
+    it('with null', () => {
+      const justToNothing = Maybe
+        .of(5)
+        .map(double)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+      const nothing = Maybe.of<number>(null)
+      expect(Maybe.caseOf(caseOfMather, justToNothing)).toBe(0)
+      expect(Maybe.caseOf(caseOfMather, nothing)).toBe(0)
+    })
+
+    it('carry', () => {
+      const just = Maybe.of(5).map(double)
+      expect(Maybe.caseOf(caseOfMather)(just)).toBe(15)
+      expect(typeof Maybe.caseOf(caseOfMather)).toBe('function')
+    })
+  })
 })
 
 describe('Just and Nothing', () => {
