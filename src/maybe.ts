@@ -141,19 +141,33 @@ export interface MaybeShape<T> {
    * // More example:
    *
    * brokenDataMaybe.caseOf({
-    *  Just: (x) => Maybe.of(x * x),
-    *  Nothing: () => Maybe.of(-1),
+   *  Just: (x) => Maybe.of(x * x),
+   *  Nothing: () => Maybe.of(-1),
    * }).map((x) => x ^ 2) // Just(1)
    *
    * unwrappedNormal.caseOf({
-    *  Just: (x) => Maybe.of(x * x),
-    *  Nothing: () => Maybe.of(-1),
+   *  Just: (x) => Maybe.of(x * x),
+   *  Nothing: () => Maybe.of(-1),
    * }).map((x) => x ^ 2) // Nothing
    * ```
    * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
    */
   caseOf<U>(mather: CaseOf<T, U>): U
 
+  /**
+   * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`
+   *   _Maybe(Maybe a) -> Maybe a _
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const just = Maybe.of(10)
+   * const nestedJust = Maybe.of(just) // Just(Just(10))
+   *
+   * const backJust = nestedJust.join() // Just(10)
+   * const backMoreJust = backJust.join() // Nothing
+   * ```
+   * */
   join(): JoinMaybe<T>
 }
 
