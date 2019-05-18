@@ -4,6 +4,11 @@ type Nullable<T> = T | null | undefined
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<NonNullable<ReturnType<U>>>
 
+export type CaseOf<T, U> = {
+  Just: (value: T) => U,
+  Nothing: () => U,
+}
+
 export interface MaybeShape<T> {
   /**
    * Apply some function to value in container. `map` for Just
@@ -112,6 +117,8 @@ export interface MaybeShape<T> {
    * ```
    */
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
+
+  caseOf<U>(mather: CaseOf<T, U>): U
 }
 
 /**
@@ -271,6 +278,10 @@ export class Just<T> implements MaybeShape<T> {
   apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U> {
     return maybe.map((fn) => fn(this.value))
   }
+
+  caseOf<U>(mather: CaseOf<T, U>): U {
+    return mather.Just(this.value)
+  }
 }
 
 export class Nothing<T> implements MaybeShape<T> {
@@ -311,5 +322,9 @@ export class Nothing<T> implements MaybeShape<T> {
   /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
   apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): ApplicativeResult<T, U> {
     return new Nothing()
+  }
+
+  caseOf<U>(mather: CaseOf<T, U>): U {
+    return mather.Nothing()
   }
 }

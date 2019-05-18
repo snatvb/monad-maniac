@@ -5,7 +5,6 @@ node_js:
 cache: yarn
 script: yarn test
 
-# We build PRs, but don't trigger separate builds for the PR from the branch.
 branches:
   only:
     - master

@@ -199,6 +199,24 @@ describe('Just and Nothing', () => {
     expect(nothing.apply(maybeDouble).toString()).toBe('Nothing()')
   })
 
+  it('caseOf', () => {
+    const just = Maybe.of(5)
+    expect(just.toString()).toBe('Just(5)')
+    const caseOfMather: Maybe.CaseOf<number, number> = {
+      Just: (x) => x + 5,
+      Nothing: () => 0,
+    }
+    expect(just.map(double).caseOf(caseOfMather)).toBe(15)
+    expect(
+      just
+        .map(double)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+        .caseOf(caseOfMather)
+    ).toBe(0)
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)
