@@ -423,10 +423,9 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
   * ```ts
   * import { Maybe } from 'monad-maniac'
   *
-  * const firstDataMaybe = Maybe.of(10)
-  * const secondDataMaybe = Maybe.of(10)
+  * const just = Maybe.of(10)
   *
-  * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
+  * const isEqual = Maybe.equalsValue(10, just) // true
   * ```
   * */
 export function equalsValue<T>(value: T, maybe: MaybeShape<T>): boolean
