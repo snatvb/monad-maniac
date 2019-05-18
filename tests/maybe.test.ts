@@ -236,6 +236,25 @@ describe('Just and Nothing', () => {
     ).toBe(0)
   })
 
+  it('join', () => {
+    const just = Maybe.of(5)
+    const nestedJust = Maybe.of(just)
+    const joinedJust = Maybe
+      .of(Maybe.of(nestedJust))
+      .join()
+      .join()
+      .join()
+    const nothing = Maybe.of<number>(null)
+    const nestedNothing = Maybe.of(nothing)
+    expect(just.toString()).toBe('Just(5)')
+    expect(joinedJust.toString()).toBe('Just(5)')
+    expect(nestedJust.toString()).toBe('Just(Just(5))')
+    expect(nestedJust.join().toString()).toBe('Just(5)')
+    expect(just.join().toString()).toBe('Nothing()')
+    expect(nothing.join().toString()).toBe('Nothing()')
+    expect(nestedNothing.join().toString()).toBe('Nothing()')
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)

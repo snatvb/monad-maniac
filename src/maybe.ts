@@ -4,6 +4,8 @@ type Nullable<T> = T | null | undefined
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<NonNullable<ReturnType<U>>>
 
+type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
+
 export type CaseOf<T, U> = {
   Just: (value: T) => U,
   Nothing: () => U,
@@ -120,7 +122,7 @@ export interface MaybeShape<T> {
 
   caseOf<U>(mather: CaseOf<T, U>): U
 
-  // join
+  join(): JoinMaybe<T>
 }
 
 /**
@@ -166,7 +168,6 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
   }
 }
 
-type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
 export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
   return value.caseOf({
     Just: (x) => x instanceof Just ? x : new Nothing() as JoinMaybe<T>,
@@ -292,6 +293,10 @@ export class Just<T> implements MaybeShape<T> {
   caseOf<U>(mather: CaseOf<T, U>): U {
     return mather.Just(this.value)
   }
+
+  join(): JoinMaybe<T> {
+    return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
+  }
 }
 
 export class Nothing<T> implements MaybeShape<T> {
@@ -336,5 +341,9 @@ export class Nothing<T> implements MaybeShape<T> {
 
   caseOf<U>(mather: CaseOf<T, U>): U {
     return mather.Nothing()
+  }
+
+  join(): JoinMaybe<T> {
+    return new Nothing() as JoinMaybe<T>
   }
 }
