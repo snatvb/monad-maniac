@@ -481,7 +481,7 @@ export class Just<T> implements MaybeShape<T> {
   equals(value: MaybeShape<T>): boolean {
     return value.caseOf({
       Just: (x) => x === this.value,
-      Nothing: () => true,
+      Nothing: () => false,
     })
   }
 }
