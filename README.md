@@ -87,7 +87,7 @@ const maybeBaz = Maybe.of(undefined) // Nothing()
 
 To be continue...
 
-[travis-image]: https://travis-ci.org/snatvb/monad-maniac.svg?style=flat-square
+[travis-image]: https://travis-ci.org/snatvb/monad-maniac.svg?style=flat-square&branch=master
 [travis-url]: https://travis-ci.org/snatvb/monad-maniac
 [npm-image]: https://img.shields.io/npm/v/monad-maniac.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/monad-maniac
