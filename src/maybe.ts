@@ -179,6 +179,8 @@ export interface MaybeShape<T> {
   join(): JoinMaybe<T>
 
   equals(value: T): boolean
+
+  equalsMaybe(value: MaybeShape<T>): boolean
 }
 
 /**
@@ -457,6 +459,13 @@ export class Just<T> implements MaybeShape<T> {
   equals(value: T): boolean {
     return this.value === value
   }
+
+  equalsMaybe(value: MaybeShape<T>): boolean {
+    return value.caseOf({
+      Just: (x) => x === this.value,
+      Nothing: () => true,
+    })
+  }
 }
 
 export class Nothing<T> implements MaybeShape<T> {
@@ -511,5 +520,12 @@ export class Nothing<T> implements MaybeShape<T> {
 
   equals(value: T): boolean {
     return value === undefined || value === null
+  }
+
+  equalsMaybe(value: MaybeShape<T>): boolean {
+    return value.caseOf({
+      Just: () => false,
+      Nothing: () => true,
+    })
   }
 }
