@@ -17,10 +17,14 @@ One day, one of the more junior programmers approaches you, a furtive expression
 ## Maybe
 `Maybe` - this is monad for safe working with data. How ofter do you seen such error?
 ```js
-Uncaught ReferenceError: foo is not defined
-    at <anonymous>:1:1
+const foo = {}
+
+foo.bar.baz
+...
+Uncaught TypeError: Cannot read property 'baz' of undefined
+    at <anonymous>:1:9
 ```
-`Maybe` can you help you, maybe not... :)
+`Maybe` can you help you, maybe not... :smirk:
 
 ```js
 const db = [
