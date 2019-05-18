@@ -178,9 +178,9 @@ export interface MaybeShape<T> {
    * */
   join(): JoinMaybe<T>
 
-  equals(value: T): boolean
+  equalsValue(value: T): boolean
 
-  equalsMaybe(value: MaybeShape<T>): boolean
+  equals(value: MaybeShape<T>): boolean
 }
 
 /**
@@ -384,7 +384,7 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
 export function equals<T>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<T>) => boolean
 export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
   const op = (maybeB: MaybeShape<T>): boolean => {
-    return maybeA.equalsMaybe(maybeB)
+    return maybeA.equals(maybeB)
   }
   return helpers.curry1(op, maybeB)
 }
@@ -445,11 +445,11 @@ export class Just<T> implements MaybeShape<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
 
-  equals(value: T): boolean {
+  equalsValue(value: T): boolean {
     return this.value === value
   }
 
-  equalsMaybe(value: MaybeShape<T>): boolean {
+  equals(value: MaybeShape<T>): boolean {
     return value.caseOf({
       Just: (x) => x === this.value,
       Nothing: () => true,
@@ -507,11 +507,11 @@ export class Nothing<T> implements MaybeShape<T> {
     return new Nothing() as JoinMaybe<T>
   }
 
-  equals(value: T): boolean {
+  equalsValue(value: T): boolean {
     return value === undefined || value === null
   }
 
-  equalsMaybe(value: MaybeShape<T>): boolean {
+  equals(value: MaybeShape<T>): boolean {
     return value.caseOf({
       Just: () => false,
       Nothing: () => true,
