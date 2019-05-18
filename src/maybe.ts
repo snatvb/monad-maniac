@@ -6,6 +6,13 @@ type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<NonNullabl
 
 type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
 
+/**
+ * Type of `caseOf` method.
+ *
+ * `Just` must be function what takes value from `Maybe` if the `Maybe` is `Just(some)` and return some value.
+ *
+ *  `Nothing` must be function what return some value if the `Maybe` is `Nothing()`.
+ */
 export type CaseOf<T, U> = {
   Just: (value: T) => U,
   Nothing: () => U,
