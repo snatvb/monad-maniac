@@ -391,6 +391,33 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
   return helpers.curry1(op, maybeB)
 }
 
+/**
+ * Method like [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue)
+ * but to get maybe and call method `equalsValue` with a function.
+  *
+  * ```ts
+  * import { Maybe } from 'monad-maniac'
+  *
+  * const firstDataMaybe = Maybe.of(10)
+  * const secondDataMaybe = Maybe.of(10)
+  *
+  * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
+  * ```
+  * */
+export function equalsValue<T>(value: T, maybe?: MaybeShape<T>): boolean
+/**
+ * Just curried `equalsValue`.
+ *
+ * _a -> Maybe(a) -> boolean_
+ */
+export function equalsValue<T>(value: T): (maybe: MaybeShape<T>) => boolean
+export function equalsValue<T>(value: T, maybe?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
+  const op = (maybe: MaybeShape<T>): boolean => {
+    return maybe.equalsValue(value)
+  }
+  return helpers.curry1(op, maybe)
+}
+
 export class Just<T> implements MaybeShape<T> {
   private value: NonNullable<T>
 
