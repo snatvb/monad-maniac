@@ -8,6 +8,7 @@ export type CaseOf<L, R, U> = {
 
 export interface Shape<L, R> {
   map<U>(f: (value: R) => U): Shape<L, U>
+  orElse<U>(f: (value: L) => U): U | R
   chain<U>(f: (value: R) => U): U | L
   filter(predicate: (value: R) => boolean): Shape<L | R, R >
   getOrElse<U>(defaultValue: U): R | U
@@ -40,6 +41,10 @@ export class Right<L ,R> implements Shape<L ,R> {
     return of(f(this.value))
   }
 
+  orElse<U>(_f: (value: L) => U): U | R {
+    return this.value
+  }
+
   chain<U>(f: (value: R) => U): U | L {
     return f(this.value)
   }
@@ -50,7 +55,7 @@ export class Right<L ,R> implements Shape<L ,R> {
     }
     return new Left<R, R>(this.value)
   }
-  getOrElse<U>(_defaultValue: U): R | U {
+  getOrElse<U>(_defaultValue: U): R {
     return this.value
   }
   get(): L | R {
@@ -79,6 +84,10 @@ class Left<L, R> implements  Shape<L, R> {
 
   map<U>(_f: (value: R) => U): Shape<L, U> {
     return new Left<L, U>(this.value)
+  }
+
+  orElse<U>(f: (value: L) => U): U {
+    return f(this.value)
   }
 
   chain<U>(_f: (value: R) => U): U | L {
