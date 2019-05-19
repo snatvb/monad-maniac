@@ -1,6 +1,5 @@
 import * as helpers from './helpers'
-
-type Nullable<T> = T | null | undefined
+import { Nullable } from './types'
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<ReturnType<U>>
 
