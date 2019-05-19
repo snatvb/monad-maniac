@@ -1,5 +1,5 @@
 import * as helpers from './helpers'
-// import { Nullable } from './types'
+import { Nullable } from './types'
 
 export type CaseOf<L, R, U> = {
   Right: (value: R) => U,
@@ -42,9 +42,9 @@ export function get<L, R>(either: Either<L, R>): L | R {
   return either.get()
 }
 
-export function fromNullable<L, R>(value: R | L): Either<L, R> {
+export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, R> {
   if (value === null || value === undefined) {
-    return new Left<L, R>(value as L)
+    return new Left<Nullable<L>, R>(value as Nullable<L>)
   }
   return new Right<L, R>(value as R)
 }

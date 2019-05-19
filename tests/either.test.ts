@@ -3,6 +3,23 @@ import { Either } from '../src'
 const double = (x: number): number => x * 2
 
 describe('Either pure functions', () => {
+  describe('of', () => {
+    it('direct call', () => {
+      expect(Either.of(150).toString()).toBe('Right(150)')
+      expect(Either.of('right').toString()).toBe('Right(right)')
+    })
+  })
+
+  describe('fromNullable', () => {
+    it('direct call', () => {
+      expect(Either.fromNullable<string, number>(150).toString()).toBe('Right(150)')
+      expect(Either.fromNullable<string, string>('right').toString()).toBe('Right(right)')
+      expect(Either.fromNullable<string, string>(null).toString()).toBe('Left(null)')
+      expect(Either.fromNullable<string, string>(undefined).toString()).toBe('Left(undefined)')
+      expect(Either.fromNullable<string, string>(undefined).orElse(() => Either.of('gog')).toString()).toBe('Right(gog)')
+    })
+  })
+
   describe('get', () => {
     it('direct call', () => {
       const left: Either.Shape<string, number> = new Either.Left('Server error')
