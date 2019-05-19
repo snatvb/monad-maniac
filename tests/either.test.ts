@@ -2,6 +2,56 @@ import { Either } from '../src'
 
 const double = (x: number): number => x * 2
 
+describe('Either pure functions', () => {
+  describe('get', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.get(left)).toBe('Server error')
+      expect(Either.get(right)).toBe(150)
+    })
+  })
+
+  describe('map', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.map(double, left).get()).toBe('Server error')
+      expect(Either.map(double, right).get()).toBe(300)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.map(double)(left).get()).toBe('Server error')
+      expect(Either.map(double)(right).get()).toBe(300)
+    })
+  })
+
+  describe('orElse', () => {
+    const orElse = (message: string) => ({ message })
+
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.orElse(orElse, left)).toEqual({ message: 'Server error' })
+      expect(Either.orElse(orElse, right)).toBe(150)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.orElse(orElse)(left)).toEqual({ message: 'Server error' })
+      expect(Either.orElse(orElse)(right)).toBe(150)
+    })
+  })
+})
+
 describe('Either: Left & Right', () => {
   // const foo: string = 'foo'
   // const bar: string = 'bar'
