@@ -105,6 +105,16 @@ export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | 
   return helpers.curry1(op, either)
 }
 
+export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either: Either<L, R>): U
+/**
+ * Just curried `caseOf`.
+ */
+export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>): (either: Either<L, R>) => U
+export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either?: Either<L, R>): U | ((either: Either<L, R>) => U) {
+  const op = (either: Either<L, R>) => either.caseOf(matcher)
+  return helpers.curry1(op, either)
+}
+
 export class Right<L ,R> implements Either<L ,R> {
   private value: R
 
