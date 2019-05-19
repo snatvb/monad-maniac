@@ -79,6 +79,18 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U
   return helpers.curry1(op, either)
 }
 
+export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): L | U
+/**
+ * Just curried `orElse`.
+ *
+ * _(a -> b) -> Either(a) -> Either(b)_
+ */
+export function orElse<L, R, U>(f: (value: L) => U): (either: Either<L, R>) => R | U
+export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
+  const op = (either: Either<L, R>) => either.orElse(f)
+  return helpers.curry1(op, either)
+}
+
 export class Right<L ,R> implements Either<L ,R> {
   private value: R
 
