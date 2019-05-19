@@ -91,14 +91,14 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
   return helpers.curry1(op, either)
 }
 
-export function filter<L, R, U>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
+export function filter<L, R>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
 /**
  * Just curried `filter`.
  *
  * _(a -> b) -> Either(a) -> Either(b)_
  */
-export function filter<L, R, U>(predicate: (value: R) => boolean): (either: Either<L, R>) => Either<L | R, R >
-export function filter<L, R, U>(predicate: (value: R) => boolean, either?: Either<L, R>): Either<L | R, R > | ((either: Either<L, R>) => Either<L | R, R >) {
+export function filter<L, R>(predicate: (value: R) => boolean): (either: Either<L, R>) => Either<L | R, R >
+export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L, R>): Either<L | R, R > | ((either: Either<L, R>) => Either<L | R, R >) {
   const op = (either: Either<L, R>) => either.filter(predicate)
   return helpers.curry1(op, either)
 }
