@@ -58,8 +58,6 @@ export function fromNullable<L, R>(value: R | L): Either<L, R> {
 export function map<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L, U>
 /**
  * Just curried `map`.
- *
- * _(a -> b) -> Either(a) -> Either(b)_
  */
 export function map<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => Either<L, U>
 export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
@@ -70,8 +68,6 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
 export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): L | U
 /**
  * Just curried `chain`.
- *
- * _(a -> b) -> Either(a) -> Either(b)_
  */
 export function chain<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => L | U
 export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U | ((either: Either<L, R>) => L | U) {
@@ -82,8 +78,6 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U
 export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): R | U
 /**
  * Just curried `orElse`.
- *
- * _(a -> b) -> Either(a) -> Either(b)_
  */
 export function orElse<L, R, U>(f: (value: L) => U): (either: Either<L, R>) => R | U
 export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
@@ -94,12 +88,20 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
 export function filter<L, R>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
 /**
  * Just curried `filter`.
- *
- * _(a -> b) -> Either(a) -> Either(b)_
  */
 export function filter<L, R>(predicate: (value: R) => boolean): (either: Either<L, R>) => Either<L | R, R >
 export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L, R>): Either<L | R, R > | ((either: Either<L, R>) => Either<L | R, R >) {
   const op = (either: Either<L, R>) => either.filter(predicate)
+  return helpers.curry1(op, either)
+}
+
+export function getOrElse<L, R, U>(defaultValue: U, either: Either<L, R>): R | U
+/**
+ * Just curried `getOrElse`.
+ */
+export function getOrElse<L, R, U>(defaultValue: U): (either: Either<L, R>) => R | U
+export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
+  const op = (either: Either<L, R>) => either.getOrElse(defaultValue)
   return helpers.curry1(op, either)
 }
 
