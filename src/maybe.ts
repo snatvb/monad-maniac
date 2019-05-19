@@ -395,6 +395,31 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
   return helpers.curry1(op, maybe)
 }
 
+/**
+ * List function
+ *
+ * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const foo = Maybe.of(12)
+ * ```
+ * */
+export function lift<T, U>(f: (value: T) => Nullable<U>, value: Nullable<T>): MaybeShape<NonNullable<U>>
+/**
+ * Just curried `lift`.
+ *
+ * _(a -> b) -> a -> Maybe(b)_
+ */
+export function lift<T, U>(f: (value: T) => Nullable<U>): (value: Nullable<T>) => MaybeShape<NonNullable<U>>
+export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): MaybeShape<NonNullable<U>> | ((value: Nullable<T>) => MaybeShape<NonNullable<U>>) {
+  const op = (value: Nullable<T>) => of(value).map(f)
+  if (arguments.length > 1) {
+    return op(value)
+  } else {
+    return op
+  }
+}
+
 
 /**
  * Method like [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals)
