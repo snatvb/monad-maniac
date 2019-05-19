@@ -96,6 +96,26 @@ describe('Either pure functions', () => {
       expect(Either.toString(right)).toBe('Right(150)')
     })
   })
+
+  describe('isLeft', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.isLeft(left)).toBe(true)
+      expect(Either.isLeft(right)).toBe(false)
+    })
+  })
+
+  describe('isRight', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.isRight(left)).toBe(false)
+      expect(Either.isRight(right)).toBe(true)
+    })
+  })
 })
 
 describe('Either: Left & Right', () => {
