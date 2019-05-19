@@ -26,6 +26,18 @@ export function of<L, R>(value: R): Either<L, R> {
   return new Right(value)
 }
 
+export function toString<L, R>(either: Either<L, R>): string {
+  return either.toString()
+}
+
+export function isLeft<L, R>(either: Either<L, R>): boolean {
+  return either.isLeft()
+}
+
+export function isRight<L, R>(either: Either<L, R>): boolean {
+  return either.isRight()
+}
+
 export function fromNullable<L, R>(value: R | L): Either<L, R> {
   if (value === null || value === undefined) {
     return new Left<L, R>(value as L)
