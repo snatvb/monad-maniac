@@ -50,6 +50,52 @@ describe('Either pure functions', () => {
       expect(Either.orElse(orElse)(right)).toBe(150)
     })
   })
+
+  describe('chain', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.chain(double, left)).toBe('Server error')
+      expect(Either.chain(double, right)).toBe(300)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.chain(double)(left)).toBe('Server error')
+      expect(Either.chain(double)(right)).toBe(300)
+    })
+  })
+
+  describe('getOrElse', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.getOrElse('no-o-o', left)).toBe('no-o-o')
+      expect(Either.getOrElse('no-o-o', right)).toBe(150)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.getOrElse('no-o-o')(left)).toBe('no-o-o')
+      expect(Either.getOrElse('no-o-o')(right)).toBe(150)
+    })
+  })
+
+  describe('toString', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.toString(left)).toBe('Left(Server error)')
+      expect(Either.toString(right)).toBe('Right(150)')
+    })
+  })
 })
 
 describe('Either: Left & Right', () => {
