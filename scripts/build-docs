@@ -1,11 +1,9 @@
 #!/usr/bin/env sh
 rm -rf docs && \
   ./node_modules/.bin/typedoc \
-    --out docs \
+    --options scripts/typedoc.js \
     --includes src \
-    --exclude src/helpers.ts \
     --tsconfig ts/doc.tsconfig.json \
-    --theme minimal \
     src && \
   touch docs/.nojekyll && \
 echo "snatvb.ru" > docs/CNAME
