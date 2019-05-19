@@ -42,7 +42,7 @@ export function fromNullable<L, R>(value: R | L): Either<L, R> {
  * const name: string | void = Math.random() > 0.5 ? 'Jake' : undefined
  * const result: Either.Shape<string, string> = typeof name === 'string'
  *  ? new Either.Right(name)
- * : new Either.Left('Server error')
+ *  : new Either.Left('Server error')
  * const greeting = Either.map((name) => `Welcome, ${name}!`, result)
  *
  * // ...
@@ -64,6 +64,18 @@ export function map<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L
 export function map<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => Either<L, U>
 export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
   const op = (either: Either<L, R>) => either.map(f)
+  return helpers.curry1(op, either)
+}
+
+export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): L | U
+/**
+ * Just curried `chain`.
+ *
+ * _(a -> b) -> Either(a) -> Either(b)_
+ */
+export function chain<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => L | U
+export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U | ((either: Either<L, R>) => L | U) {
+  const op = (either: Either<L, R>) => either.chain(f)
   return helpers.curry1(op, either)
 }
 
