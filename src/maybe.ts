@@ -401,7 +401,27 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
  * ```ts
  * import { Maybe } from 'monad-maniac'
  *
- * const foo = Maybe.of(12)
+ * const  find = <T>(list: T[]) => (predicate: (v: T) => boolean) => list.find(predicate)
+ *
+ * type DataItem = {
+ *   id: number
+ *   name: string
+ * }
+ *
+ * const data: DataItem[] = [{ id: 1, name: 'Jayson' }, { id: 2, name: 'Michael' }]
+ * const safeFindInList = Maybe.lift(find(data))
+ *
+ * const resultJust = safeFindInList(({ id }) => id === 1) // Just([object Object])
+ * const resultNothing = safeFindInList(({ id }) => id === 10) // Nothing()
+ *
+ * const matcher: Maybe.CaseOf<DataItem, string> = {
+ *  Just: ({ name }) => name,
+ *  Nothing: () => 'UNKNOWN'
+ * }
+ *
+ * console.log(resultJust.caseOf(matcher)) // 'Jayson'
+ * console.log(resultNothing.caseOf(matcher)) // 'UNKNOWN'
+ *
  * ```
  * */
 export function lift<T, U>(f: (value: T) => Nullable<U>, value: Nullable<T>): MaybeShape<NonNullable<U>>
