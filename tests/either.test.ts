@@ -116,6 +116,51 @@ describe('Either pure functions', () => {
       expect(Either.isRight(right)).toBe(true)
     })
   })
+
+  describe('caseOf', () => {
+    const matcher: Either.CaseOf<string, number, number> = {
+      Right: double,
+      Left: (message) => message.length,
+    }
+
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.caseOf(matcher, left)).toBe(12)
+      expect(Either.caseOf(matcher, right)).toBe(300)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(Either.caseOf(matcher)(left)).toBe(12)
+      expect(Either.caseOf(matcher)(right)).toBe(300)
+    })
+  })
+
+  describe('filter', () => {
+    const predicate = (x: number) => x > 150
+
+    it('direct call', () => {
+      const left: Either.Shape<number, number> = new Either.Left(150)
+      const right: Either.Shape<number, number> = new Either.Right(150)
+
+      expect(Either.filter(predicate, left.map(double)).isLeft()).toBe(true)
+      expect(Either.filter(predicate, right).isLeft()).toBe(true)
+      expect(Either.filter(predicate, right.map(double)).isRight()).toBe(true)
+    })
+
+    it('carried', () => {
+      const left: Either.Shape<number, number> = new Either.Left(150)
+      const right: Either.Shape<number, number> = new Either.Right(150)
+
+      expect(Either.filter(predicate)(left.map(double)).isLeft()).toBe(true)
+      expect(Either.filter(predicate)(right).isLeft()).toBe(true)
+      expect(Either.filter(predicate)(right.map(double)).isRight()).toBe(true)
+    })
+  })
 })
 
 describe('Either: Left & Right', () => {
