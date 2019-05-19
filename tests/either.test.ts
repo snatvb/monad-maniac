@@ -247,4 +247,15 @@ describe('Either: Left & Right', () => {
     expect(left.caseOf(matcher)).toBe(12)
     expect(right.caseOf(matcher)).toBe(300)
   })
+
+  it('filter', () => {
+    const predicate = (x: number) => x > 150
+    const left: Either.Shape<number, number> = new Either.Left(150)
+    const right: Either.Shape<number, number> = new Either.Right(150)
+
+    expect(left.map(double).filter(predicate).isLeft()).toBe(true)
+    expect(right.filter(predicate).isLeft()).toBe(true)
+    expect(right.map(double).filter(predicate).isRight()).toBe(true)
+    expect(right.filter(predicate).map(double).isLeft()).toBe(true)
+  })
 })
