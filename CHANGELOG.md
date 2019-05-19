@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2019-TO-BE
+
+### Added
+- `lift` as pure function
+
+### Changed
+- Fixed mistake in naming `mather` to `matcher` :sweat_smile:
+- Fixed type `ApplicativeResult` (could not return nullable)
+
 ## [0.1.0] - 2019-05-19
 
 ### Added
@@ -20,3 +29,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/snatvb/monad-maniac/compare/v0.0.1...v0.1.0
+[0.2.0]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...v0.2.0
