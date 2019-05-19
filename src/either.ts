@@ -166,10 +166,10 @@ export class Right<L ,R> implements Either<L ,R> {
     return `Right(${String(this.value)})`
   }
   isLeft(): boolean {
-    return true
+    return false
   }
   isRight(): boolean {
-    return false
+    return true
   }
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Right(this.value)
