@@ -38,6 +38,10 @@ export function isRight<L, R>(either: Either<L, R>): boolean {
   return either.isRight()
 }
 
+export function get<L, R>(either: Either<L, R>): L | R {
+  return either.get()
+}
+
 export function fromNullable<L, R>(value: R | L): Either<L, R> {
   if (value === null || value === undefined) {
     return new Left<L, R>(value as L)
