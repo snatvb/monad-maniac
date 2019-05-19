@@ -137,13 +137,13 @@ export interface MaybeShape<T> {
    * const brokenDataMaybe = Maybe.of<number>(null)
    * const normalDataMaybe = Maybe.of(10)
    *
-   * const mather: Maybe.CaseOf<number> = {
+   * const matcher: Maybe.CaseOf<number> = {
    *  Just: (x) => x * x,
    *  Nothing: () => -1,
    * }
    *
-   * const unwrappedNormal = normalDataMaybe.caseOf(mather) // 100
-   * const unwrappedBroken = normalDataMaybe.caseOf(mather) // -1
+   * const unwrappedNormal = normalDataMaybe.caseOf(matcher) // 100
+   * const unwrappedBroken = normalDataMaybe.caseOf(matcher) // -1
    *
    * // More example:
    *
@@ -157,9 +157,9 @@ export interface MaybeShape<T> {
    *  Nothing: () => Maybe.of(-1),
    * }).map((x) => x ^ 2) // Nothing
    * ```
-   * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
+   * @param matcher This is object with two fields `Just` and `Nothing` what contains functions.
    */
-  caseOf<U>(mather: CaseOf<T, U>): U
+  caseOf<U>(matcher: CaseOf<T, U>): U
 
   /**
    * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
@@ -338,13 +338,13 @@ export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): 
    * const brokenDataMaybe = Maybe.of<number>(null)
    * const normalDataMaybe = Maybe.of(10)
    *
-   * const mather: Maybe.CaseOf<number> = {
+   * const matcher: Maybe.CaseOf<number> = {
    *  Just: (x) => x * x,
    *  Nothing: () => -1,
    * }
    *
-   * const unwrappedNormal = Maybe.caseOf(mather, brokenDataMaybe) // 100
-   * const unwrappedBroken = Maybe.caseOf(mather, normalDataMaybe) // -1
+   * const unwrappedNormal = Maybe.caseOf(matcher, brokenDataMaybe) // 100
+   * const unwrappedBroken = Maybe.caseOf(matcher, normalDataMaybe) // -1
    *
    * // More example:
    *
@@ -358,7 +358,7 @@ export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): 
    *  Nothing: () => Maybe.of(-1),
    * }).map((x) => x ^ 2) // Nothing
    * ```
-   * @param mather This is object with two fields `Just` and `Nothing` what contains functions.
+   * @param matcher This is object with two fields `Just` and `Nothing` what contains functions.
  * */
 export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe: MaybeShape<T>): U
 /**
@@ -541,8 +541,8 @@ export class Just<T> implements MaybeShape<T> {
   }
 
   /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
-  caseOf<U>(mather: CaseOf<T, U>): U {
-    return mather.Just(this.value)
+  caseOf<U>(matcher: CaseOf<T, U>): U {
+    return matcher.Just(this.value)
   }
 
   /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
@@ -605,8 +605,8 @@ export class Nothing<T> implements MaybeShape<T> {
   }
 
   /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
-  caseOf<U>(mather: CaseOf<T, U>): U {
-    return mather.Nothing()
+  caseOf<U>(matcher: CaseOf<T, U>): U {
+    return matcher.Nothing()
   }
 
   /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
