@@ -244,6 +244,29 @@ describe('Pure functions', () => {
       expect(safeFind(data).toString()).toBe('Just([object Object])')
       expect(safeFindNothing(data).toString()).toBe('Nothing()')
     })
+
+    it('case from docs', () => {
+      const  find = <T>(list: T[]) => (predicate: (v: T) => boolean) => list.find(predicate)
+
+      type DataItem = {
+        id: number
+        name: string
+      }
+
+      const data: DataItem[] = [{ id: 1, name: 'Jayson' }, { id: 2, name: 'Michael' }]
+      const safeFindInList = Maybe.lift(find(data))
+
+      const resultJust = safeFindInList(({ id }) => id === 1) // Just([object Object])
+      const resultNothing = safeFindInList(({ id }) => id === 10) // Nothing()
+
+      const matcher: Maybe.CaseOf<DataItem, string> = {
+       Just: ({ name }) => name,
+       Nothing: () => 'UNKNOWN'
+      }
+
+      expect(resultJust.caseOf(matcher)).toBe('Jayson')
+      expect(resultNothing.caseOf(matcher)).toBe('UNKNOWN')
+    })
   })
 })
 
