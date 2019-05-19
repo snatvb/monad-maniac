@@ -79,7 +79,7 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U
   return helpers.curry1(op, either)
 }
 
-export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): L | U
+export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): R | U
 /**
  * Just curried `orElse`.
  *
@@ -88,6 +88,18 @@ export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): L | U
 export function orElse<L, R, U>(f: (value: L) => U): (either: Either<L, R>) => R | U
 export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
   const op = (either: Either<L, R>) => either.orElse(f)
+  return helpers.curry1(op, either)
+}
+
+export function filter<L, R, U>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
+/**
+ * Just curried `filter`.
+ *
+ * _(a -> b) -> Either(a) -> Either(b)_
+ */
+export function filter<L, R, U>(predicate: (value: R) => boolean): (either: Either<L, R>) => Either<L | R, R >
+export function filter<L, R, U>(predicate: (value: R) => boolean, either?: Either<L, R>): Either<L | R, R > | ((either: Either<L, R>) => Either<L | R, R >) {
+  const op = (either: Either<L, R>) => either.filter(predicate)
   return helpers.curry1(op, either)
 }
 
