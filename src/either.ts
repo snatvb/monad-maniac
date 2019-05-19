@@ -1,9 +1,9 @@
 // import * as helpers from './helpers'
 // import { Nullable } from './types'
 
-export type CaseOf<L, R> = {
-  Right: (value: R) => L,
-  Left: () => L,
+export type CaseOf<L, R, U> = {
+  Right: (value: R) => U,
+  Left: (value: L) => U,
 }
 
 export interface Shape<L, R> {
@@ -15,7 +15,7 @@ export interface Shape<L, R> {
   toString(): string
   isLeft(): boolean
   isRight(): boolean
-  caseOf<U>(matcher: CaseOf<R, U>): U
+  caseOf<U>(matcher: CaseOf<L, R, U>): U
 }
 
 export function of<L, R>(value: R): Shape<L, R> {
@@ -57,16 +57,16 @@ export class Right<L ,R> implements Shape<L ,R> {
     return this.value
   }
   toString(): string {
-    throw new Error("Method not implemented.");
+    return `Right(${String(this.value)})`
   }
   isLeft(): boolean {
-    throw new Error("Method not implemented.");
+    return true
   }
   isRight(): boolean {
-    throw new Error("Method not implemented.");
+    return false
   }
-  caseOf<U>(matcher: CaseOf<R, U>): U {
-    throw new Error("Method not implemented.");
+  caseOf<U>(matcher: CaseOf<L, R, U>): U {
+    return matcher.Right(this.value)
   }
 }
 
@@ -95,15 +95,15 @@ class Left<L, R> implements  Shape<L, R> {
     return this.value
   }
   toString(): string {
-    throw new Error("Method not implemented.");
+    return `Left(${String(this.value)})`
   }
   isLeft(): boolean {
-    throw new Error("Method not implemented.");
+    return true
   }
   isRight(): boolean {
-    throw new Error("Method not implemented.");
+    return false
   }
-  caseOf<U>(matcher: CaseOf<R, U>): U {
-    throw new Error("Method not implemented.");
+  caseOf<U>(matcher: CaseOf<L, R, U>): U {
+    return matcher.Left(this.value)
   }
 }
