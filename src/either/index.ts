@@ -1,17 +1,18 @@
 import { Nullable } from '../types'
 
-export type CaseOf<T, U> = {
-  Right: (value: T) => U,
-  Left: () => U,
+export type CaseOf<L, R> = {
+  Right: (value: R) => L,
+  Left: () => L,
 }
 
-export interface Shape<T> {
-  map<U>(f: (value: NonNullable<T>) => Nullable<U>): Shape<NonNullable<U>>
-  chain<U>(f: (value: T) => U): U | undefined
-  filter(f: (value: T) => boolean): Shape<T>
-  getOrElse<U>(defaultValue: U): T | U
+export interface Shape<L, R> {
+  map<U>(f: (value: NonNullable<R>) => Nullable<U>): Shape<L, NonNullable<U>>
+  chain<U>(f: (value: R) => U): U | undefined
+  filter(f: (value: R) => boolean): Shape<L, R>
+  getOrElse<U>(defaultValue: U): R | U
+  get(): L | R
   toString(): string
   isLeft(): boolean
   isRight(): boolean
-  caseOf<U>(matcher: CaseOf<T, U>): U
+  caseOf<U>(matcher: CaseOf<R, U>): U
 }
