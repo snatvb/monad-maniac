@@ -206,6 +206,45 @@ describe('Pure functions', () => {
       expect(Maybe.equalsValue('bar')(just)).toBeFalsy()
     })
   })
+
+  describe('lift', () => {
+    const find = <T>(predicate: (v: T) => boolean) => (list: T[]): T | void => {
+      const fn = ([item, ...list]: T[]): T | void => {
+        if (predicate(item) === true) { return item }
+        if (list.length === 0) { return undefined }
+        return fn(list)
+      }
+      return fn(list)
+    }
+    type DataItem = {
+      id: number,
+      name: string,
+    }
+    const data: DataItem[] = [{ id: 1, name: 'Jayson' }, { id: 2, name: 'Michael' }]
+    const predicateValue = ({ id }: DataItem) => id === 1
+    const predicateNull = ({ id }: DataItem) => id === 10
+
+    it('find (helper)', () => {
+      const finded = find(predicateValue)(data)
+      const notBeFound = find(predicateNull)(data)
+      expect(finded).toEqual(data[0])
+      expect(notBeFound).toBeUndefined()
+    })
+
+    it('with value and null to find', () => {
+      const finded = Maybe.lift(find(predicateValue), data)
+      const notFound = Maybe.lift(find(predicateNull), data)
+      expect(finded.toString()).toBe('Just([object Object])')
+      expect(notFound.toString()).toBe('Nothing()')
+    })
+
+    it('with value and null to find carried', () => {
+      const safeFind = Maybe.lift(find(predicateValue))
+      const safeFindNothing = Maybe.lift(find(predicateNull))
+      expect(safeFind(data).toString()).toBe('Just([object Object])')
+      expect(safeFindNothing(data).toString()).toBe('Nothing()')
+    })
+  })
 })
 
 describe('Just and Nothing', () => {
