@@ -2,7 +2,7 @@ import * as helpers from './helpers'
 
 type Nullable<T> = T | null | undefined
 
-type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<NonNullable<ReturnType<U>>>
+type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<ReturnType<U>>
 
 type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
 
