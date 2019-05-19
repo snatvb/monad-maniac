@@ -396,7 +396,8 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
 }
 
 /**
- * List function
+ * Lift function - contain function in wrapper for returning `Maybe`.
+ * If function will return `null` or `undefined`, you get `Nothing`, else `Just(some)`.
  *
  * ```ts
  * import { Maybe } from 'monad-maniac'
