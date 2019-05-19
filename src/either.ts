@@ -1,4 +1,4 @@
-import { Nullable } from '../types'
+import { Nullable } from './types'
 
 export type CaseOf<L, R> = {
   Right: (value: R) => L,
