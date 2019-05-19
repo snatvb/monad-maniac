@@ -3,7 +3,9 @@
  */
 /** For fix tsdoc */
 import * as Maybe from './maybe'
+import * as Either from './either'
 
 export {
-  Maybe
+  Maybe,
+  Either,
 }
