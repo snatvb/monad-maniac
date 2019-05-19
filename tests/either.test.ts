@@ -73,4 +73,17 @@ describe('Either: Left & Right', () => {
     expect(left.isRight()).toBe(false)
     expect(right.isRight()).toBe(true)
   })
+
+  it('caseOf', () => {
+    const left: Either.Shape<string, number> = new Either.Left('Server error')
+    const right: Either.Shape<string, number> = new Either.Right(150)
+
+    const matcher: Either.CaseOf<string, number, number> = {
+      Right: double,
+      Left: (message) => message.length,
+    }
+
+    expect(left.caseOf(matcher)).toBe(12)
+    expect(right.caseOf(matcher)).toBe(300)
+  })
 })
