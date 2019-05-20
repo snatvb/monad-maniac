@@ -178,6 +178,25 @@ describe('Either pure functions', () => {
       expect(Either.filter(predicate)(right.map(double)).isRight()).toBe(true)
     })
   })
+
+  describe('attempt', () => {
+    const errorFunction = (x: number): number => {
+      if (x === 0) {
+        throw new Error('Number is zero!')
+      }
+      return x
+    }
+
+    it('direct call', () => {
+      expect(Either.attempt(errorFunction, [0]).map(double).toString()).toBe('Left(Error: Number is zero!)')
+      expect(Either.attempt(errorFunction, [10]).map(double).toString()).toBe('Right(20)')
+    })
+
+    it('carried', () => {
+      expect(Either.attempt(errorFunction)([0]).map(double).toString()).toBe('Left(Error: Number is zero!)')
+      expect(Either.attempt(errorFunction)([10]).map(double).toString()).toBe('Right(20)')
+    })
+  })
 })
 
 describe('Either: Left & Right', () => {
