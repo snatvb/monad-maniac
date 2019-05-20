@@ -402,6 +402,19 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.chain`](../interfaces/_either_.shape.html#chain)
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const name: string | void = Math.random() > 0.5 ? 'Jake' : undefined
+ * const result: Either.Shape<string, string> = typeof name === 'string'
+ *  ? new Either.Right(name)
+ *  : new Either.Left('Server error')
+ * const greeting = Either.chain((name) => `Welcome, ${name}!`, result) // 'Welcome, Jake' or 'Server error'
+ * ```
+ * */
 export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L, U> | U
 /**
  * Just curried `chain`.
@@ -412,6 +425,22 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Eithe
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.orElse`](../interfaces/_either_.shape.html#orElse)
+ *
+ * Apple some function to `Left` value.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ * const left: Either.Shape<string, number> = new Either.Left('Server error')
+ * const right: Either.Shape<string, number> = new Either.Right(150)
+ *
+ * const orElse = (message: string) => ({ message })
+ *
+ * left.orElse(orElse) // { message: 'Server error' }
+ * right.orElse(orElse) // 150
+ * ```
+ */
 export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): R | U
 /**
  * Just curried `orElse`.
