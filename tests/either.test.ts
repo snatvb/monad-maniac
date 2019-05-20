@@ -403,10 +403,32 @@ describe('Cases from docs', () => {
     const left = Either.left<number, number>(300)
     const right = Either.right<number, number>(150)
 
-    const resultLeft = left.get() // 300
-    const resultRight = right.get() // 150
+    const resultLeft = left.toString() // Left(300)
+    const resultRight = right.toString() // Right(150)
 
-    expect(resultLeft).toBe(300)
-    expect(resultRight).toBe(150)
+    expect(resultLeft).toBe('Left(300)')
+    expect(resultRight).toBe('Right(150)')
+  })
+
+  it('isLeft', () => {
+    const left = Either.left<number, number>(300)
+    const right = Either.right<number, number>(150)
+
+    const resultLeft = left.isLeft() // true
+    const resultRight = right.isLeft() // false
+
+    expect(resultLeft).toBe(true)
+    expect(resultRight).toBe(false)
+  })
+
+  it('isRight', () => {
+    const left = Either.left<number, number>(300)
+    const right = Either.right<number, number>(150)
+
+    const resultLeft = left.isRight() // false
+    const resultRight = right.isRight() // true
+
+    expect(resultLeft).toBe(false)
+    expect(resultRight).toBe(true)
   })
 })
