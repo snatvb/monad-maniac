@@ -437,8 +437,8 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Eithe
  *
  * const orElse = (message: string) => ({ message })
  *
- * left.orElse(orElse) // { message: 'Server error' }
- * right.orElse(orElse) // 150
+ * Either.orElse(orElse, left) // { message: 'Server error' }
+ * Either.orElse(orElse, right) // 150
  * ```
  */
 export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): R | U
@@ -461,8 +461,8 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
  * import { Either } from 'monad-maniac'
  * const right: Either.Shape<number, number> = new Either.Right(150)
  *
- * right.filter((x) => x > 150) // Left(150)
- * right.filter((x) => x < 300) // Right(150)
+ * Either.filter((x) => x > 150, right) // Left(150)
+ * Either.filter((x) => x < 300, right) // Right(150)
  * ```
  */
 export function filter<L, R>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
@@ -484,8 +484,8 @@ export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L
  * const left = Either.left<number, number>(150)
  * const right = Either.right<number, number>(150)
  *
- * const resultLeft = left.getOrElse(0) // 0
- * const resultRight = right.getOrElse(0) // 150
+ * const resultLeft = Either.getOrElse(0, left) // 0
+ * const resultRight = Either.getOrElse(0, right) // 150
  * ```
  */
 export function getOrElse<L, R, U>(defaultValue: U, either: Either<L, R>): R | U
@@ -498,6 +498,24 @@ export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | 
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.caseOf`](../interfaces/_either_.shape.html#caseof)
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const matcher: Either.CaseOf<string, number, number> = {
+ *   Right: (x) => x * 2,
+ *   Left: (message) => message.length,
+ * }
+ *
+ * const left: Either.Shape<string, number> = new Either.Left('Server error')
+ * const right: Either.Shape<string, number> = new Either.Right(150)
+ *
+ * Either.caseOf(matcher, left) // 12
+ * Either.caseOf(matcher, right) // 300
+ * ```
+ */
 export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either: Either<L, R>): U
 /**
  * Just curried `caseOf`.
