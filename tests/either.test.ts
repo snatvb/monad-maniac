@@ -369,4 +369,15 @@ describe('Cases from docs', () => {
     expect(resultErrorMultiply).toBe('Factor is zero!')
     expect(resultError).toBe('Divider is zero!')
   })
+
+  it('orElse', () => {
+    const left = Either.left<Error, string>(new Error('Some error'))
+    const right = Either.right<Error, string>('Jake')
+
+    const resultLeft = left.orElse((error) => error.message) // Some error
+    const resultRight = right.orElse((error) => error.message) // Jake
+
+    expect(resultLeft).toBe('Some error')
+    expect(resultRight).toBe('Jake')
+  })
 })

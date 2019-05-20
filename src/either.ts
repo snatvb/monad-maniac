@@ -28,13 +28,27 @@ export interface Either<L, R> {
    *
    * const resultNormal = divide(10)(5).map(double).get() // 4
    * const resultErrorDivide = divide(10)(0).map(double).get() // 'Divider is zero!'
-   * expect(resultNormal).toBe(4)
-   * expect(resultErrorDivide).toBe('Divider is zero!')
    * ```
    *
    * @param f Function to apply for Right value
    */
   map<U>(f: (value: R) => U): Either<L, U>
+    /**
+   * Apply some function to value in container `Left`. Like `map` for `Right`.
+   *
+   * The methods returns result from function or value from `Right`.
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<Error, string>(new Error('Some error'))
+   * const right = Either.right<Error, string>('Jake')
+   *
+   * const resultLeft = left.orElse((error) => error.message) // Some error
+   * const resultRight = right.orElse((error) => error.message) // Jake
+   * ```
+   *
+   * @param f Function to apply for Right value
+   */
   orElse<U>(f: (value: L) => U): U | R
   /**
    * Apply some function to value in container. `map` for `Right`
