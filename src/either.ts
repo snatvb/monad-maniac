@@ -301,6 +301,26 @@ export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, 
   return new Right<L, R>(value as R)
 }
 
+/**
+ * This is `try {} catch(error) {}` for `Either`.
+ * If the function throws exception then the error will
+ * catch and placed in `Left`, and in `Right` otherwise.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const errorFunction = (x: number): number => {
+ *   if (x === 0) {
+ *     throw new Error('Number is zero!')
+ *   }
+ *   return x
+ * }
+ *
+ * Either.attempt(errorFunction, [0]).map(double).toString() // Left(Error: Number is zero!)
+ * Either.attempt(errorFunction, [10]).map(double).toString() // Right(20)
+ *
+ * ```
+ */
 export function attempt<R>(f: (...args: any[]) => R, args: any[]): Either<Error, R>
 export function attempt<R>(f: (...args: any[]) => R): (args: any[]) => Either<Error, R>
 export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error, R> | ((args: any[]) => Either<Error, R>) {
