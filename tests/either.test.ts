@@ -339,6 +339,20 @@ describe('Cases from docs', () => {
      return Either.right(dividend / divider)
     }
 
+    const resultNormal = divide(10)(5).map(double).get() // 4
+    const resultErrorDivide = divide(10)(0).map(double).get() // 'Divider is zero!'
+    expect(resultNormal).toBe(4)
+    expect(resultErrorDivide).toBe('Divider is zero!')
+  })
+
+  it('chain', () => {
+    const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+     if (divider === 0) {
+       return Either.left('Divider is zero!')
+     }
+     return Either.right(dividend / divider)
+    }
+
     const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
       if (factor === 0) {
         return Either.left('Factor is zero!')
