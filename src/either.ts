@@ -426,7 +426,7 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Eithe
 }
 
 /**
- * Method like [`Either.orElse`](../interfaces/_either_.shape.html#orElse)
+ * Method like [`Either.orElse`](../interfaces/_either_.shape.html#orelse)
  *
  * Apple some function to `Left` value.
  *
@@ -451,6 +451,20 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.filter`](../interfaces/_either_.shape.html#filter)
+ *
+ * Apple some function to `Right` value and if the function
+ * returns not `true` then value will be placed to `Left`.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ * const right: Either.Shape<number, number> = new Either.Right(150)
+ *
+ * right.filter((x) => x > 150) // Left(150)
+ * right.filter((x) => x < 300) // Right(150)
+ * ```
+ */
 export function filter<L, R>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
 /**
  * Just curried `filter`.
@@ -461,6 +475,19 @@ export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.getOrElse`](../interfaces/_either_.shape.html#getorelse)
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const left = Either.left<number, number>(150)
+ * const right = Either.right<number, number>(150)
+ *
+ * const resultLeft = left.getOrElse(0) // 0
+ * const resultRight = right.getOrElse(0) // 150
+ * ```
+ */
 export function getOrElse<L, R, U>(defaultValue: U, either: Either<L, R>): R | U
 /**
  * Just curried `getOrElse`.
