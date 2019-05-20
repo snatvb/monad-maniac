@@ -62,6 +62,19 @@ export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error
   return helpers.curry1(op, args)
 }
 
+export function asyncAttempt<R>(f: (...args: any[]) => R, args: any[]): Promise<Either<Error, R>>
+export function asyncAttempt<R>(f: (...args: any[]) => R): (args: any[]) => Promise<Either<Error, R>>
+export function asyncAttempt<R>(f: (...args: any[]) => R, args?: any[]): Promise<Either<Error, R>> | ((args: any[]) => Promise<Either<Error, R>>) {
+  const op = async (args: any[]) => {
+    try {
+      return new Right<Error, R>(await f(...args))
+    } catch(error) {
+      return new Left<Error, R>(error)
+    }
+  }
+  return helpers.curry1(op, args)
+}
+
 /**
  * Method like [`Either.map`](../interfaces/_either_.shape.html#map)
  *
