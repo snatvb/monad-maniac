@@ -267,10 +267,33 @@ export function isRight<L, R>(either: Either<L, R>): boolean {
   return either.isRight()
 }
 
+/**
+ * Returns `value` from `Left` or `Right`
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const right = Either.right<string, number>(10)
+ * const left = Either.left<string, number>('Some error')
+ *
+ * Either.get(left) // 'Some error'
+ * Either.get(right) // 10
+ * ```
+ */
 export function get<L, R>(either: Either<L, R>): L | R {
   return either.get()
 }
 
+/**
+ * Returns `value` from `Left` or `Right`
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * Either.fromNullable<string, number>(150).toString() // Right(150)
+ * Either.fromNullable<string, number>(null).toString() // Left(null)
+ * ```
+ */
 export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, R> {
   if (value === null || value === undefined) {
     return new Left<Nullable<L>, R>(value as Nullable<L>)
