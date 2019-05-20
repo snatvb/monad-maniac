@@ -197,6 +197,31 @@ describe('Either pure functions', () => {
       expect(Either.attempt(errorFunction)([10]).map(double).toString()).toBe('Right(20)')
     })
   })
+
+  describe('asyncAttempt', () => {
+    const errorAsyncFunction = (x: number): Promise<number> => new Promise((resolve, reject) => {
+      if (x === 0) {
+        reject(new Error('Number is zero!'))
+      }
+      resolve(x)
+    })
+
+    it('direct call', async () => {
+      const left = await Either.asyncAttempt(errorAsyncFunction, [0])
+      const right = await Either.asyncAttempt(errorAsyncFunction, [10])
+      expect(left.map(double).toString()).toBe('Left(Error: Number is zero!)')
+      expect(right.map(double).toString()).toBe('Right(20)')
+    })
+
+    it('carried', async () => {
+      const leftErrorFn = Either.asyncAttempt(errorAsyncFunction)
+      const rightErrorFn = Either.asyncAttempt(errorAsyncFunction)
+      const left = await leftErrorFn([0])
+      const right = await rightErrorFn([10])
+      expect(left.map(double).toString()).toBe('Left(Error: Number is zero!)')
+      expect(right.map(double).toString()).toBe('Right(20)')
+    })
+  })
 })
 
 describe('Either: Left & Right', () => {
