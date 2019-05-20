@@ -329,3 +329,30 @@ describe('Either: Left & Right', () => {
     expect(right.filter(predicate).map(double).isLeft()).toBe(true)
   })
 })
+
+describe('Cases from docs', () => {
+  it('map', () => {
+    const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+     if (divider === 0) {
+       return Either.left('Divider is zero!')
+     }
+     return Either.right(dividend / divider)
+    }
+
+    const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
+      if (factor === 0) {
+        return Either.left('Factor is zero!')
+      }
+      return Either.right(multiplicand * factor)
+    }
+
+    const resultNormal = divide(10)(2).chain(nonZeroMultiply(20)).get() // 100
+    const resultErrorDivide = divide(10)(0).chain(nonZeroMultiply(20)).get() // 'Divider is zero!'
+    const resultErrorMultiply = divide(0)(2).chain(nonZeroMultiply(20)).get() // 'Factor is zero!'
+    const resultError = divide(0)(0).chain(nonZeroMultiply(20)).get() // 'Divider is zero!'
+    expect(resultNormal).toBe(100)
+    expect(resultErrorDivide).toBe('Divider is zero!')
+    expect(resultErrorMultiply).toBe('Factor is zero!')
+    expect(resultError).toBe('Divider is zero!')
+  })
+})

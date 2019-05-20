@@ -15,6 +15,14 @@ export interface Either<L, R> {
    * will call the function with value, for `Left` return `Left`.
    * If `map` will return `null` or `undefined` then return `Right` with that.
    * Be careful.
+   * @param f Function to apply for Right value
+   */
+  map<U>(f: (value: R) => U): Either<L, U>
+  orElse<U>(f: (value: L) => U): U | R
+  /**
+   * Apply some function to value in container. `map` for `Right`
+   * will call the function with value, for `Left` return `Left`
+   * else value what be returned from the function.
    * ```ts
    * import { Either } from 'monad-maniac'
    *
@@ -32,15 +40,14 @@ export interface Either<L, R> {
     *  return Either.right(multiplicand * factor)
    * }
    *
-   * const resultNormal = divide(10)(2).chain(nonZeroMultiply(20)).get() // 4
+   * const resultNormal = divide(10)(2).chain(nonZeroMultiply(20)).get() // 100
    * const resultErrorDivide = divide(10)(0).chain(nonZeroMultiply(20)).get() // 'Divider is zero!'
-   * const resultErrorMultiply= divide(0)(2).chain(nonZeroMultiply(20)).get() // ''Factor is zero!'
+   * const resultErrorMultiply= divide(0)(2).chain(nonZeroMultiply(20)).get() // 'Factor is zero!'
+   * const resultError = divide(0)(0).chain(nonZeroMultiply(20)).get() // 'Divider is zero!'
    *
    * ```
    * @param f Function to apply for Right value
    */
-  map<U>(f: (value: R) => U): Either<L, U>
-  orElse<U>(f: (value: L) => U): U | R
   chain<U>(f: (value: R) => U): U | Either<L, U>
   filter(predicate: (value: R) => boolean): Either<L | R, R >
   getOrElse<U>(defaultValue: U): R | U
