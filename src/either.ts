@@ -216,14 +216,53 @@ export function right<L, R>(value: R): Either<L, R> {
   return new Right(value)
 }
 
+/**
+ * Returns `Left` or `Right` as `string`.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const right = Either.right<string, number>(10)
+ * const left = Either.left<string, number>('Some error')
+ *
+ * Either.toString(left) // Left(Some error)
+ * Either.toString(right) // Right(10)
+ * ```
+ */
 export function toString<L, R>(either: Either<L, R>): string {
   return either.toString()
 }
 
+/**
+ * Returns `true` if this`Left` or `false` otherwise.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const right = Either.right<string, number>(10)
+ * const left = Either.left<string, number>('Some error')
+ *
+ * Either.isLeft(left) // true
+ * Either.isLeft(right) // false
+ * ```
+ */
 export function isLeft<L, R>(either: Either<L, R>): boolean {
   return either.isLeft()
 }
 
+/**
+ * Returns `true` if this`Right` or `false` otherwise.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const right = Either.right<string, number>(10)
+ * const left = Either.left<string, number>('Some error')
+ *
+ * Either.isRight(left) // false
+ * Either.isRight(right) // true
+ * ```
+ */
 export function isRight<L, R>(either: Either<L, R>): boolean {
   return either.isRight()
 }
