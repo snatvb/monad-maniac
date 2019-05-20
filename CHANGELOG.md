@@ -7,14 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2019-TO-BE
+## [0.2.0] - 2019-05-21
 
 ### Added
-- `lift` as pure function
+- `lift` as pure function for `Maybe`
+- `Either` monad
+- `Maybe` type for ts-doc annotation :tada:
+- Alias for `Maybe` interface for use as type - `Shape`, this need using with context `Maybe.Shape<T>`
 
 ### Changed
 - Fixed mistake in naming `mather` to `matcher` :sweat_smile:
-- Fixed type `ApplicativeResult` (could not return nullable)
+- Fixed type `ApplicativeResult` (it could not return the nullable, now this will be available)
+- **WARNING** `MaybeShape` marked as **Deprecated**!
 
 ## [0.1.0] - 2019-05-19
 
@@ -27,6 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smoke test and really build to **Travis CI**.
 - Labels of `npm`, `coverage`, `travis`.
 
-[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...develop
 [0.1.0]: https://github.com/snatvb/monad-maniac/compare/v0.0.1...v0.1.0
 [0.2.0]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...v0.2.0
