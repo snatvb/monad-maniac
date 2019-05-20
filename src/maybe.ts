@@ -1,9 +1,9 @@
 import * as helpers from './helpers'
 import { Nullable } from './types'
 
-type ApplicativeResult<T, U extends ((value: T) => any)> = MaybeShape<ReturnType<U>>
+type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
 
-type JoinMaybe<T> = T extends MaybeShape<any> ? T : MaybeShape<T>
+type JoinMaybe<T> = T extends Maybe<any> ? T : Maybe<T>
 
 /**
  * Type of `caseOf` method.
@@ -17,7 +17,7 @@ export type CaseOf<T, U> = {
   Nothing: () => U,
 }
 
-export interface MaybeShape<T> {
+export interface Maybe<T> {
   /**
    * Apply some function to value in container. `map` for Just
    * will call the function with value, for `Nothing` return Nothing.
@@ -34,10 +34,10 @@ export interface MaybeShape<T> {
    * const bar = Maybe.of(nonZeroDivider).map(tenDivide) // Just(5)
    * ```
   */
-  map<U>(f: (value: NonNullable<T>) => Nullable<U>): MaybeShape<NonNullable<U>>
+  map<U>(f: (value: NonNullable<T>) => Nullable<U>): Maybe<NonNullable<U>>
 
   /**
-   * Working like [`MaybeShape.map`](#map) but returns not `Maybe`, but the function result.
+   * Working like [`Maybe.map`](#map) but returns not `Maybe`, but the function result.
    * If `chain` will call on `Nothing` then return `undefined`.
    *
    * ```ts
@@ -100,7 +100,7 @@ export interface MaybeShape<T> {
    * console.log(result.toString()) // Nothing()
    * ```
    */
-  filter(f: (value: T) => boolean): MaybeShape<T>
+  filter(f: (value: T) => boolean): Maybe<T>
 
   /**
    * Returns `Nothing()` if `Maybe` is `Nothing`, else
@@ -124,7 +124,7 @@ export interface MaybeShape<T> {
    * const resultAddNull= just.apply(maybeAddNull).toString() // Nothing()
    * ```
    */
-  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U>
+  apply<U extends ((value: T) => any)>(maybe: Maybe<U>): ApplicativeResult<T, U>
 
   /**
    * If need unwrap `Maybe` and call some function and save type without
@@ -204,12 +204,16 @@ export interface MaybeShape<T> {
    * const isMoreEqual = equalsValue.equals(Maybe.of(15)) // false
    * ```
    * */
-  equals(value: MaybeShape<T>): boolean
+  equals(value: Maybe<T>): boolean
 }
+
+export type Shape<T> = Maybe<T>
+/** WARNING! DEPRECATED! Will remove in 0.3.0! */
+export type MaybeShape<T> = Maybe<T>
 
 /**
  * Unwrap Maybe with default value.
- * Method like [`MaybeShape.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse)
+ * Method like [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse)
  * but to get maybe and call method `getOrElse` with a function.
  *
  * ```ts
@@ -222,15 +226,15 @@ export interface MaybeShape<T> {
  * const bad = Maybe.getOrElse(-1, nothing) // -1
  * ```
  * */
-export function getOrElse<T, U>(defaultValue: U, maybe: MaybeShape<T>): T | U
+export function getOrElse<T, U>(defaultValue: U, maybe: Maybe<T>): T | U
 /**
  * Just curried `getOrElse`.
  *
  * *(a -> b) -> Maybe(a) -> Maybe(b)*
  */
-export function getOrElse<T, U>(defaultValue: U): (maybe: MaybeShape<T>) => T | U
-export function getOrElse<T, U>(defaultValue: U, maybe?: MaybeShape<T>): (T | U) | ((maybe: MaybeShape<T>) => T | U) {
-  const op = (m: MaybeShape<T>) => m.getOrElse(defaultValue)
+export function getOrElse<T, U>(defaultValue: U): (maybe: Maybe<T>) => T | U
+export function getOrElse<T, U>(defaultValue: U, maybe?: Maybe<T>): (T | U) | ((maybe: Maybe<T>) => T | U) {
+  const op = (m: Maybe<T>) => m.getOrElse(defaultValue)
   return helpers.curry1(op, maybe)
 }
 
@@ -249,7 +253,7 @@ export function getOrElse<T, U>(defaultValue: U, maybe?: MaybeShape<T>): (T | U)
   * @param value The value to wrap in a `Maybe`. If it is `undefined` or `null`,
                the result will be `Nothing`; otherwise it will be Just with value with your type.
   * */
-export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
+export function of<T>(value: T | null | undefined): Maybe<NonNullable<T>> {
   if (value === undefined || value === null) {
     return new Nothing()
   } else {
@@ -262,7 +266,7 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
    *
    *   _Maybe(Maybe a) -> Maybe a_
    *
-   * Method like [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join)
+   * Method like [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join)
    *
    * ```ts
    * import { Maybe } from 'monad-maniac'
@@ -274,7 +278,7 @@ export function of<T>(value: T | null | undefined): MaybeShape<NonNullable<T>> {
    * const backMoreJust = Maybe.join(backJust) // Nothing
    * ```
    * */
-export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
+export function join<T>(value: Maybe<T>): JoinMaybe<T> {
   return value.caseOf({
     Just: (x) => x instanceof Just ? x : new Nothing() as JoinMaybe<T>,
     Nothing: () => new Nothing() as JoinMaybe<T>
@@ -282,7 +286,7 @@ export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
 }
 
 /**
- * Method like [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply)
+ * Method like [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply)
  * but to get maybe and call method `apply` with a function.
  *
  * ```ts
@@ -292,20 +296,20 @@ export function join<T>(value: MaybeShape<T>): JoinMaybe<T> {
  * const appliedFoo = Maybe.apply(Maybe.of((x) => x * x), foo) // Just(144)
  * ```
  * */
-export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe: MaybeShape<T>): ApplicativeResult<T, U>
+export function apply<T, U extends ((value: T) => any)>(applicative: Maybe<U>, maybe: Maybe<T>): ApplicativeResult<T, U>
 /**
  * Just curried `apply`.
  *
  * _Maybe(a -> b) -> Maybe(a) -> Maybe(b)_
  */
-export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>): (maybe: MaybeShape<T>) => ApplicativeResult<T, U>
-export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<U>, maybe?: MaybeShape<T>): ApplicativeResult<T, U> | ((maybe: MaybeShape<T>) => ApplicativeResult<T, U>) {
-  const op = (m: MaybeShape<T>) => m.apply(applicative)
+export function apply<T, U extends ((value: T) => any)>(applicative: Maybe<U>): (maybe: Maybe<T>) => ApplicativeResult<T, U>
+export function apply<T, U extends ((value: T) => any)>(applicative: Maybe<U>, maybe?: Maybe<T>): ApplicativeResult<T, U> | ((maybe: Maybe<T>) => ApplicativeResult<T, U>) {
+  const op = (m: Maybe<T>) => m.apply(applicative)
   return helpers.curry1(op, maybe)
 }
 
 /**
- * Method like [`MaybeShape.map`](../interfaces/_maybe_.maybeshape.html#map)
+ * Method like [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map)
  * but to get maybe and call method `map` with a function.
  *
  * ```ts
@@ -315,20 +319,20 @@ export function apply<T, U extends ((value: T) => any)>(applicative: MaybeShape<
  * const mappedFoo = Maybe.map(foo, (x) => x * x) // Just(144)
  * ```
  * */
-export function map<T, U>(f: (value: T) => Nullable<U>, maybe: MaybeShape<T>): MaybeShape<NonNullable<U>>
+export function map<T, U>(f: (value: T) => Nullable<U>, maybe: Maybe<T>): Maybe<NonNullable<U>>
 /**
  * Just curried `map`.
  *
  * _(a -> b) -> Maybe(a) -> Maybe(b)_
  */
-export function map<T, U>(f: (value: T) => Nullable<U>): (maybe: MaybeShape<T>) => MaybeShape<NonNullable<U>>
-export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): MaybeShape<NonNullable<U>> | ((maybe: MaybeShape<T>) => MaybeShape<NonNullable<U>>) {
-  const op = (m: MaybeShape<T>) => m.map(f)
+export function map<T, U>(f: (value: T) => Nullable<U>): (maybe: Maybe<T>) => Maybe<NonNullable<U>>
+export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: Maybe<T>): Maybe<NonNullable<U>> | ((maybe: Maybe<T>) => Maybe<NonNullable<U>>) {
+  const op = (m: Maybe<T>) => m.map(f)
   return helpers.curry1(op, maybe)
 }
 
 /**
- * Method like [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof)
+ * Method like [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof)
  * but to get maybe and call method `caseOf` with a function.
  *
    * ```ts
@@ -359,20 +363,20 @@ export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: MaybeShape<T>): 
    * ```
    * @param matcher This is object with two fields `Just` and `Nothing` what contains functions.
  * */
-export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe: MaybeShape<T>): U
+export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe: Maybe<T>): U
 /**
  * Just curried `caseOf`.
  *
  * _CaseOf a b -> Maybe(a) -> b_
  */
-export function caseOf<T, U>(matcher: CaseOf<T, U>): (maybe: MaybeShape<T>) => U
-export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: MaybeShape<T>): U | ((maybe: MaybeShape<T>) => U) {
-  const op = (m: MaybeShape<T>) => m.caseOf(matcher)
+export function caseOf<T, U>(matcher: CaseOf<T, U>): (maybe: Maybe<T>) => U
+export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: Maybe<T>): U | ((maybe: Maybe<T>) => U) {
+  const op = (m: Maybe<T>) => m.caseOf(matcher)
   return helpers.curry1(op, maybe)
 }
 
 /**
- * Method like [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain)
+ * Method like [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain)
  * but to get maybe and call method `chain` with a function.
  *
  * ```ts
@@ -382,15 +386,15 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: MaybeShape<T>): U | 
  * const resultFoo = Maybe.chain(foo, (x) => x * x) // 144
  * ```
  * */
-export function chain<T, U>(f: (value: T) => U, maybe: MaybeShape<T>): U | undefined
+export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | undefined
 /**
  * Just curried `chain`.
  *
  * _(a -> b) -> Maybe(a) -> b_
  */
-export function chain<T, U>(f: (value: T) => U): (maybe: MaybeShape<T>) => U | undefined
-export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | undefined | ((maybe: MaybeShape<T>) => U | undefined) {
-  const op = (m: MaybeShape<T>) => m.chain(f)
+export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | undefined
+export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | undefined | ((maybe: Maybe<T>) => U | undefined) {
+  const op = (m: Maybe<T>) => m.chain(f)
   return helpers.curry1(op, maybe)
 }
 
@@ -424,14 +428,14 @@ export function chain<T, U>(f: (value: T) => U, maybe?: MaybeShape<T>): U | unde
  *
  * ```
  * */
-export function lift<T, U>(f: (value: T) => Nullable<U>, value: Nullable<T>): MaybeShape<NonNullable<U>>
+export function lift<T, U>(f: (value: T) => Nullable<U>, value: Nullable<T>): Maybe<NonNullable<U>>
 /**
  * Just curried `lift`.
  *
  * _(a -> b) -> a -> Maybe(b)_
  */
-export function lift<T, U>(f: (value: T) => Nullable<U>): (value: Nullable<T>) => MaybeShape<NonNullable<U>>
-export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): MaybeShape<NonNullable<U>> | ((value: Nullable<T>) => MaybeShape<NonNullable<U>>) {
+export function lift<T, U>(f: (value: T) => Nullable<U>): (value: Nullable<T>) => Maybe<NonNullable<U>>
+export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): Maybe<NonNullable<U>> | ((value: Nullable<T>) => Maybe<NonNullable<U>>) {
   const op = (value: Nullable<T>) => of(value).map(f)
   if (arguments.length > 1) {
     return op(value)
@@ -442,7 +446,7 @@ export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): M
 
 
 /**
- * Method like [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals)
+ * Method like [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals)
  * but to get maybe and call method `equals` with a function.
   *
   * ```ts
@@ -454,22 +458,22 @@ export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): M
   * const isEqual = Maybe.equals(firstDataMaybe, secondDataMaybe) // true
   * ```
   * */
-export function equals<T>(maybeA: MaybeShape<T>, maybeB: MaybeShape<T>): boolean
+export function equals<T>(maybeA: Maybe<T>, maybeB: Maybe<T>): boolean
 /**
  * Just curried `equals`.
  *
  * _Maybe(a) -> Maybe(a) -> boolean_
  */
-export function equals<T>(maybeA: MaybeShape<T>): (maybeB: MaybeShape<T>) => boolean
-export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
-  const op = (maybeB: MaybeShape<T>): boolean => {
+export function equals<T>(maybeA: Maybe<T>): (maybeB: Maybe<T>) => boolean
+export function equals<T>(maybeA: Maybe<T>, maybeB?: Maybe<T>): boolean | ((maybeB: Maybe<T>) => boolean)  {
+  const op = (maybeB: Maybe<T>): boolean => {
     return maybeA.equals(maybeB)
   }
   return helpers.curry1(op, maybeB)
 }
 
 /**
- * Method like [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue)
+ * Method like [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue)
  * but to get maybe and call method `equalsValue` with a function.
   *
   * ```ts
@@ -480,29 +484,29 @@ export function equals<T>(maybeA: MaybeShape<T>, maybeB?: MaybeShape<T>): boolea
   * const isEqual = Maybe.equalsValue(10, just) // true
   * ```
   * */
-export function equalsValue<T>(value: T, maybe: MaybeShape<T>): boolean
+export function equalsValue<T>(value: T, maybe: Maybe<T>): boolean
 /**
  * Just curried `equalsValue`.
  *
  * _a -> Maybe(a) -> boolean_
  */
-export function equalsValue<T>(value: T): (maybe: MaybeShape<T>) => boolean
-export function equalsValue<T>(value: T, maybe?: MaybeShape<T>): boolean | ((maybeB: MaybeShape<T>) => boolean)  {
-  const op = (maybe: MaybeShape<T>): boolean => {
+export function equalsValue<T>(value: T): (maybe: Maybe<T>) => boolean
+export function equalsValue<T>(value: T, maybe?: Maybe<T>): boolean | ((maybeB: Maybe<T>) => boolean)  {
+  const op = (maybe: Maybe<T>): boolean => {
     return maybe.equalsValue(value)
   }
   return helpers.curry1(op, maybe)
 }
 
-export class Just<T> implements MaybeShape<T> {
+export class Just<T> implements Maybe<T> {
   private value: NonNullable<T>
 
   constructor(value: T) {
     this.value = value as NonNullable<T>
   }
 
-  /** Method implements from [`MaybeShape.map`](../interfaces/_maybe_.maybeshape.html#map) */
-  map<U>(f: (value: NonNullable<T>) => U): MaybeShape<NonNullable<U>> {
+  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map) */
+  map<U>(f: (value: NonNullable<T>) => U): Maybe<NonNullable<U>> {
     return of(f(this.value))
   }
 
@@ -516,47 +520,47 @@ export class Just<T> implements MaybeShape<T> {
     return false
   }
 
-  /**  Method implements from [`MaybeShape.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
+  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
   getOrElse<U>(_defaultValue: U): T | U {
     return this.value
   }
 
-  /** Method implements from [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
+  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
   chain<U>(f: (value: T) => U): U {
     return f(this.value)
   }
 
-  filter(f: (value: T) => boolean): MaybeShape<T> {
+  filter(f: (value: T) => boolean): Maybe<T> {
     return f(this.value) === false ? new Nothing() : this
   }
 
-  /**  Method implements from [`MaybeShape.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
+  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
   toString(): string {
     return `Just(${String(this.value)})`
   }
 
-  /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
-  apply<U extends ((value: T) => any)>(maybe: MaybeShape<U>): ApplicativeResult<T, U> {
+  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
+  apply<U extends ((value: T) => any)>(maybe: Maybe<U>): ApplicativeResult<T, U> {
     return maybe.map((fn) => fn(this.value))
   }
 
-  /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
+  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
   caseOf<U>(matcher: CaseOf<T, U>): U {
     return matcher.Just(this.value)
   }
 
-  /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
+  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join) */
   join(): JoinMaybe<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
 
-  /** Method implements from [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
+  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return this.value === value
   }
 
-  /** Method implements from [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
-  equals(value: MaybeShape<T>): boolean {
+  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
+  equals(value: Maybe<T>): boolean {
     return value.caseOf({
       Just: (x) => x === this.value,
       Nothing: () => false,
@@ -564,9 +568,9 @@ export class Just<T> implements MaybeShape<T> {
   }
 }
 
-export class Nothing<T> implements MaybeShape<T> {
-  /** Method implements from [`MaybeShape.map`](../interfaces/_maybe_.maybeshape.html#map) */
-  map<U>(_f: (value: NonNullable<T>) => U): MaybeShape<NonNullable<U>> {
+export class Nothing<T> implements Maybe<T> {
+  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map) */
+  map<U>(_f: (value: NonNullable<T>) => U): Maybe<NonNullable<U>> {
     return new Nothing()
   }
 
@@ -580,47 +584,47 @@ export class Nothing<T> implements MaybeShape<T> {
     return true
   }
 
-  /**  Method implements from [`MaybeShape.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
+  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
   getOrElse<U>(defaultValue: U): T | U {
     return defaultValue
   }
 
-  /** Method implements from [`MaybeShape.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
+  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
   chain<U>(_f: (value: T) => U): undefined {
     return undefined
   }
 
-  filter(_f: (value: T) => boolean): MaybeShape<T> {
+  filter(_f: (value: T) => boolean): Maybe<T> {
     return this
   }
 
-  /**  Method implements from [`MaybeShape.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
+  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
   toString(): string {
     return 'Nothing()'
   }
 
-  /** Method implements from [`MaybeShape.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
-  apply<U extends ((value: T) => any)>(_maybe: MaybeShape<U>): ApplicativeResult<T, U> {
+  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
+  apply<U extends ((value: T) => any)>(_maybe: Maybe<U>): ApplicativeResult<T, U> {
     return new Nothing()
   }
 
-  /** Method implements from [`MaybeShape.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
+  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
   caseOf<U>(matcher: CaseOf<T, U>): U {
     return matcher.Nothing()
   }
 
-  /** Method implements from [`MaybeShape.join`](../interfaces/_maybe_.maybeshape.html#join) */
+  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join) */
   join(): JoinMaybe<T> {
     return new Nothing() as JoinMaybe<T>
   }
 
-  /** Method implements from [`MaybeShape.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
+  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return value === undefined || value === null
   }
 
-  /** Method implements from [`MaybeShape.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
-  equals(value: MaybeShape<T>): boolean {
+  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
+  equals(value: Maybe<T>): boolean {
     return value.caseOf({
       Just: () => false,
       Nothing: () => true,
