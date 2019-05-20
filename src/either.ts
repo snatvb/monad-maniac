@@ -49,6 +49,19 @@ export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, 
   return new Right<L, R>(value as R)
 }
 
+export function attempt<R>(f: (...args: any[]) => R, args: any[]): Either<Error, R>
+export function attempt<R>(f: (...args: any[]) => R): (args: any[]) => Either<Error, R>
+export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error, R> | ((args: any[]) => Either<Error, R>) {
+  const op = (args: any[]) => {
+    try {
+      return new Right<Error, R>(f(...args))
+    } catch(error) {
+      return new Left<Error, R>(error)
+    }
+  }
+  return helpers.curry1(op, args)
+}
+
 /**
  * Method like [`Either.map`](../interfaces/_either_.shape.html#map)
  *
