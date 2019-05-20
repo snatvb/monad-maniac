@@ -26,6 +26,14 @@ export function of<L, R>(value: R): Either<L, R> {
   return new Right(value)
 }
 
+export function left<L, R>(value: L): Either<L, R> {
+  return new Left(value)
+}
+
+export function right<L, R>(value: R): Either<L, R> {
+  return new Right(value)
+}
+
 export function toString<L, R>(either: Either<L, R>): string {
   return either.toString()
 }

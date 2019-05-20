@@ -225,11 +225,6 @@ describe('Either pure functions', () => {
 })
 
 describe('Either: Left & Right', () => {
-  // const foo: string = 'foo'
-  // const bar: string = 'bar'
-  // const baz: string = 'baz'
-  // const randomNumber: number = Math.round(Math.random() * 100)
-
   it('get', () => {
     const left: Either.Shape<string, number> = new Either.Left('Server error')
     const right: Either.Shape<string, number> = new Either.Right(150)
