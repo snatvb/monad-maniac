@@ -15,6 +15,23 @@ export interface Either<L, R> {
    * will call the function with value, for `Left` return `Left`.
    * If `map` will return `null` or `undefined` then return `Right` with that.
    * Be careful.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+   * if (divider === 0) {
+   *   return Either.left('Divider is zero!')
+   * }
+   *  return Either.right(dividend / divider)
+   * }
+   *
+   * const resultNormal = divide(10)(5).map(double).get() // 4
+   * const resultErrorDivide = divide(10)(0).map(double).get() // 'Divider is zero!'
+   * expect(resultNormal).toBe(4)
+   * expect(resultErrorDivide).toBe('Divider is zero!')
+   * ```
+   *
    * @param f Function to apply for Right value
    */
   map<U>(f: (value: R) => U): Either<L, U>
