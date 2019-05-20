@@ -334,6 +334,29 @@ export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error
   return helpers.curry1(op, args)
 }
 
+/**
+ * Function like [`Either.attempt`](../modules/_either_.maybeshape.html#attempt)
+ * This is async`try {} catch(error) {}` for `Either`.
+ * If the function throws exception then the error will
+ * catch and placed in `Left`, and in `Right` otherwise.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const errorAsyncFunction = (x: number): Promise<number> => new Promise((resolve, reject) => {
+ *   if (x === 0) {
+ *     reject(new Error('Number is zero!'))
+ *   }
+ *   resolve(x)
+ * })
+ *
+ * const left = await Either.asyncAttempt(errorAsyncFunction, [0])
+ * const right = await Either.asyncAttempt(errorAsyncFunction, [10])
+ * left.map(double).toString() // Left(Error: Number is zero!)
+ * right.map(double).toString() // Right(20)
+ *
+ * ```
+ */
 export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args: any[]): Promise<Either<Error, R>>
 export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>): (args: any[]) => Promise<Either<Error, R>>
 export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args?: any[]): Promise<Either<Error, R>> | ((args: any[]) => Promise<Either<Error, R>>) {
