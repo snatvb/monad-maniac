@@ -84,16 +84,18 @@ describe('Either pure functions', () => {
     it('direct call', () => {
       const left: Either.Shape<string, number> = new Either.Left('Server error')
       const right: Either.Shape<string, number> = new Either.Right(150)
+      const leftResult = Either.chain(double, left)
 
-      expect(Either.chain(double, left)).toBe('Server error')
+      expect(leftResult instanceof Either.Left).toBe(true)
       expect(Either.chain(double, right)).toBe(300)
     })
 
     it('carried', () => {
       const left: Either.Shape<string, number> = new Either.Left('Server error')
       const right: Either.Shape<string, number> = new Either.Right(150)
+      const leftResult = Either.chain(double)(left)
 
-      expect(Either.chain(double)(left)).toBe('Server error')
+      expect(leftResult instanceof Either.Left).toBe(true)
       expect(Either.chain(double)(right)).toBe(300)
     })
   })
@@ -267,7 +269,7 @@ describe('Either: Left & Right', () => {
     const left: Either.Shape<string, number> = new Either.Left('Server error')
     const right: Either.Shape<string, number> = new Either.Right(150)
 
-    expect(left.chain(double)).toBe('Server error')
+    expect(left.chain(double) instanceof Either.Left).toBe(true)
     expect(right.chain(double)).toBe(300)
   })
 
