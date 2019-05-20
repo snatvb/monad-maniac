@@ -398,4 +398,15 @@ describe('Cases from docs', () => {
     expect(resultLeft).toBe(0)
     expect(resultRight).toBe(150)
   })
+
+  it('get', () => {
+    const left = Either.left<number, number>(300)
+    const right = Either.right<number, number>(150)
+
+    const resultLeft = left.get() // 300
+    const resultRight = right.get() // 150
+
+    expect(resultLeft).toBe(300)
+    expect(resultRight).toBe(150)
+  })
 })
