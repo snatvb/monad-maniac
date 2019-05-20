@@ -10,6 +10,18 @@ describe('Either pure functions', () => {
     })
   })
 
+  describe('left', () => {
+    it('direct call', () => {
+      expect(Either.left<string, number>('Server Error').toString()).toBe('Left(Server Error)')
+    })
+  })
+
+  describe('right', () => {
+    it('direct call', () => {
+      expect(Either.right<string, number>(10).toString()).toBe('Right(10)')
+    })
+  })
+
   describe('fromNullable', () => {
     it('direct call', () => {
       expect(Either.fromNullable<string, number>(150).toString()).toBe('Right(150)')
