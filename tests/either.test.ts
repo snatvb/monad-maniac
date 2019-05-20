@@ -380,4 +380,22 @@ describe('Cases from docs', () => {
     expect(resultLeft).toBe('Some error')
     expect(resultRight).toBe('Jake')
   })
+
+  it('filter', () => {
+    const example = Either.right<number, number>(0)
+    const result = example.filter((x) => x !== 0).map((x) => 1 / x).get() // 0
+
+    expect(result).toBe(0)
+  })
+
+  it('getOrElse', () => {
+    const left = Either.left<number, number>(150)
+    const right = Either.right<number, number>(150)
+
+    const resultLeft = left.getOrElse(0) // 0
+    const resultRight = right.getOrElse(0) // 150
+
+    expect(resultLeft).toBe(0)
+    expect(resultRight).toBe(150)
+  })
 })
