@@ -10,9 +10,38 @@ export type CaseOf<L, R, U> = {
 export type Shape<L, R> = Either<L, R>
 
 export interface Either<L, R> {
+  /**
+   * Apply some function to value in container. `map` for `Right`
+   * will call the function with value, for `Left` return `Left`.
+   * If `map` will return `null` or `undefined` then return `Right` with that.
+   * Be careful.
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+   *  if (divider === 0) {
+   *    return Either.left('Divider is zero!')
+   *  }
+   *  return Either.right(dividend / divider)
+   * }
+   *
+   * const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
+    *  if (factor === 0) {
+    *    return Either.left('Factor is zero!')
+    *  }
+    *  return Either.right(multiplicand * factor)
+   * }
+   *
+   * const resultNormal = divide(10)(2).chain(nonZeroMultiply(20)).get() // 4
+   * const resultErrorDivide = divide(10)(0).chain(nonZeroMultiply(20)).get() // 'Divider is zero!'
+   * const resultErrorMultiply= divide(0)(2).chain(nonZeroMultiply(20)).get() // ''Factor is zero!'
+   *
+   * ```
+   * @param f Function to apply for Right value
+   */
   map<U>(f: (value: R) => U): Either<L, U>
   orElse<U>(f: (value: L) => U): U | R
-  chain<U>(f: (value: R) => U): U | L
+  chain<U>(f: (value: R) => U): U | Either<L, U>
   filter(predicate: (value: R) => boolean): Either<L | R, R >
   getOrElse<U>(defaultValue: U): R | U
   get(): L | R
@@ -115,12 +144,12 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
   return helpers.curry1(op, either)
 }
 
-export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): L | U
+export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L, U> | U
 /**
  * Just curried `chain`.
  */
-export function chain<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => L | U
-export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): L | U | ((either: Either<L, R>) => L | U) {
+export function chain<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => Either<L, U> | U
+export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<L, U> | U | ((either: Either<L, R>) => Either<L, U> | U) {
   const op = (either: Either<L, R>) => either.chain(f)
   return helpers.curry1(op, either)
 }
@@ -180,7 +209,7 @@ export class Right<L ,R> implements Either<L ,R> {
     return this.value
   }
 
-  chain<U>(f: (value: R) => U): U | L {
+  chain<U>(f: (value: R) => U): U | Either<L, U> {
     return f(this.value)
   }
 
@@ -225,8 +254,8 @@ export class Left<L, R> implements  Either<L, R> {
     return f(this.value)
   }
 
-  chain<U>(_f: (value: R) => U): U | L {
-    return this.value
+  chain<U>(_f: (value: R) => U): U | Either<L, U> {
+    return new Left<L, U>(this.value)
   }
 
   filter(_predicate: (value: R) => boolean): Either<L | R, R > {
