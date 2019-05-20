@@ -431,4 +431,20 @@ describe('Cases from docs', () => {
     expect(resultLeft).toBe(false)
     expect(resultRight).toBe(true)
   })
+
+  it('caseOf', () => {
+    const left = Either.left<string, number>('Some Error')
+    const right = Either.right<string, number>(150)
+
+    const matcher: Either.CaseOf<string, number, number> = {
+      Right: (x) => x * 2,
+      Left: (message) => message.length,
+    }
+
+    const resultLeft = left.caseOf(matcher) // 10
+    const resultRight = right.caseOf(matcher) // 300
+
+    expect(resultLeft).toBe(10)
+    expect(resultRight).toBe(300)
+  })
 })

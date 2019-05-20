@@ -136,8 +136,52 @@ export interface Either<L, R> {
    * ```
    */
   toString(): string
+  /**
+   * Returns `true` if it's `Left` and `false` otherwise.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<number, number>(300)
+   * const right = Either.right<number, number>(150)
+   *
+   * const resultLeft = left.isLeft() // true
+   * const resultRight = right.isLeft() // false
+   * ```
+   */
   isLeft(): boolean
+  /**
+   * Returns `false` if it's `Left` and `true` otherwise.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<number, number>(300)
+   * const right = Either.right<number, number>(150)
+   *
+   * const resultLeft = left.isRight() // false
+   * const resultRight = right.isRight() // true
+   * ```
+   */
   isRight(): boolean
+  /**
+   * Returns `false` if it's `Left` and `true` otherwise.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<string, number>('Some Error')
+   * const right = Either.right<string, number>(150)
+   *
+   * const matcher: Either.CaseOf<string, number, number> = {
+   *   Right: (x) => x * 2,
+   *   Left: (message) => message.length,
+   * }
+   *
+   * const resultLeft = left.caseOf(matcher) // 10
+   * const resultRight = right.caseOf(matcher) // 300
+   * ```
+   */
   caseOf<U>(matcher: CaseOf<L, R, U>): U
 }
 
