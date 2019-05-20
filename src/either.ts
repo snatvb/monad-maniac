@@ -1,6 +1,7 @@
 import * as helpers from './helpers'
 import { Nullable } from './types'
 
+/** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
   Right: (value: R) => U,
   Left: (value: L) => U,
