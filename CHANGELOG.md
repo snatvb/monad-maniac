@@ -1,28 +1,28 @@
-# Changelog
+# :page_with_curl: Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased] :bomb:
 
-## [0.2.0] - 2019-05-21
+## :bulb: [0.2.0] - 2019-05-21
 
-### Added
+### :gift: Added
 - `lift` as pure function for `Maybe`
 - `Either` monad
 - `Maybe` type for ts-doc annotation :tada:
 - Alias for `Maybe` interface for use as type - `Shape`, this need using with context `Maybe.Shape<T>`
 
-### Changed
+### :surfer: Changed
 - Fixed mistake in naming `mather` to `matcher` :sweat_smile:
 - Fixed type `ApplicativeResult` (it could not return the nullable, now this will be available)
-- **WARNING** `MaybeShape` marked as **Deprecated**!
+- :fire: **WARNING** `MaybeShape` marked as **Deprecated**!
 
-## [0.1.0] - 2019-05-19
+## :bulb: [0.1.0] - 2019-05-19
 
-### Added
+### :gift: Added
 - `join` as method and pure function.
 - `chain` as method and pure function.
 - `equals` as method and pure function.
