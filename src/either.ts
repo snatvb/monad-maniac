@@ -185,14 +185,33 @@ export interface Either<L, R> {
   caseOf<U>(matcher: CaseOf<L, R, U>): U
 }
 
+/** Alias of  [`Either.right`](../modules/_either_.html#right-2) */
 export function of<L, R>(value: R): Either<L, R> {
   return new Right(value)
 }
 
+/**
+ * Making `Right` from value
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const left = Either.left<string, number>('Some error')
+ * ```
+ */
 export function left<L, R>(value: L): Either<L, R> {
   return new Left(value)
 }
 
+/**
+ * Making `Right` from value
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const right = Either.right<string, number>(10)
+ * ```
+ */
 export function right<L, R>(value: R): Either<L, R> {
   return new Right(value)
 }
