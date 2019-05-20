@@ -122,6 +122,19 @@ export interface Either<L, R> {
    * ```
    */
   get(): L | R
+  /**
+   * Returns `Left` or `Right` as `string`: `Left(left value)` or `Right(right value)`.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<number, number>(300)
+   * const right = Either.right<number, number>(150)
+   *
+   * const resultLeft = left.toString() // Left(300)
+   * const resultRight = right.toString() // Right(150)
+   * ```
+   */
   toString(): string
   isLeft(): boolean
   isRight(): boolean
