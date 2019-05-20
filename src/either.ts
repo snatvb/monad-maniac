@@ -54,6 +54,7 @@ export interface Either<L, R> {
    * Apply some function to value in container. `map` for `Right`
    * will call the function with value, for `Left` return `Left`
    * else value what be returned from the function.
+   *
    * ```ts
    * import { Either } from 'monad-maniac'
    *
@@ -80,7 +81,32 @@ export interface Either<L, R> {
    * @param f Function to apply for Right value
    */
   chain<U>(f: (value: R) => U): U | Either<L, U>
-  filter(predicate: (value: R) => boolean): Either<L | R, R >
+  /**
+ * Apply predicate function to value in container.
+ * If the function returns not `true` then value from
+ * `Right` will be transferred to `Left`.
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const example = Either.right<number, number>(0)
+ * const result = example.filter((x) => x !== 0).map((x) => 1 / x).get() // 0
+ * ```
+ */
+  filter(predicate: (value: R) => boolean): Either<L | R, R>
+  /**
+   * If `Either` is `Left` returns `defaultValue` and returns `value` from `Right` otherwise.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<number, number>(150)
+   * const right = Either.right<number, number>(150)
+   *
+   * const resultLeft = left.getOrElse(0) // 0
+   * const resultRight = right.getOrElse(0) // 150
+   * ```
+   */
   getOrElse<U>(defaultValue: U): R | U
   get(): L | R
   toString(): string
