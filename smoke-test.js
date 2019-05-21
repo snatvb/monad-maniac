@@ -29,7 +29,7 @@ if (nothing.map(double).toString() !== 'Nothing()') {
 if (Either.left('Some error').toString() !== 'Left(Some error)') {
   throw new Error('Not Left(Some error)')
 }
-if (Either.right('Some value').toString() !== 'Left(Some value)') {
+if (Either.right('Some value').toString() !== 'Right(Some value)') {
   throw new Error('Not Right(Some value)')
 }
 `
