@@ -59,7 +59,7 @@ export interface Maybe<T> {
    * console.log(result) // undefined
    * ```
    */
-  chain<U>(f: (value: T) => U): U | undefined
+  chain<U>(f: (value: T) => U): U | Maybe<T>
 
   /** Return true if `Nothing` */
   isNothing(): boolean
@@ -386,14 +386,14 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: Maybe<T>): U | ((may
  * const resultFoo = Maybe.chain(foo, (x) => x * x) // 144
  * ```
  * */
-export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | undefined
+export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
 /**
  * Just curried `chain`.
  *
  * _(a -> b) -> Maybe(a) -> b_
  */
-export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | undefined
-export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | undefined | ((maybe: Maybe<T>) => U | undefined) {
+export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | Maybe<T>
+export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | Maybe<T> | ((maybe: Maybe<T>) => U | Maybe<T>) {
   const op = (m: Maybe<T>) => m.chain(f)
   return helpers.curry1(op, maybe)
 }
@@ -590,8 +590,8 @@ export class Nothing<T> implements Maybe<T> {
   }
 
   /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
-  chain<U>(_f: (value: T) => U): undefined {
-    return undefined
+  chain<U>(_f: (value: T) => U): Maybe<T> {
+    return this
   }
 
   filter(_f: (value: T) => boolean): Maybe<T> {
