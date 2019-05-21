@@ -56,7 +56,7 @@ export interface Maybe<T> {
    *  .filter((x) => x > 1000) // Nothing() - next function will be called never
    *  .map((x) => x + 10) // 60
    *  .chain((x) => x / 3) // 20 - actually the function will not be called
-   * console.log(result) // undefined
+   * console.log(result) // Nothing()
    * ```
    */
   chain<U>(f: (value: T) => U): U | Maybe<T>
