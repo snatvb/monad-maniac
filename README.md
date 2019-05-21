@@ -218,6 +218,7 @@ import { Maybe } from 'monad-maniac'
 const just = Maybe.of(10)
 const divided = just.chain((x) => x / 2) // 5
 const none = just.chain((x) => x > 10000 ? x / 2 : undefined) // undefined
+const maybeDivided = just.chain((x) => Maybe.of(x > 10000 ? x / 2 : undefined)) // Nothing()
 ```
 
 #### filter
