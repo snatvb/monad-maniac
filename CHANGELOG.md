@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed mistake in naming `mather` to `matcher` :sweat_smile:
 - Fixed type `ApplicativeResult` (it could not return the nullable, now this will be available)
 - :fire: **WARNING** `MaybeShape` marked as **Deprecated**!
+- :fire: `Maybe.chain` was fixed, now will returns `Nothing` if the method was called on `Nothing`!
 
 ## :bulb: [0.1.0] - 2019-05-19
 
