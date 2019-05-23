@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] :bomb:
 
+## :bulb: [0.3.0] - 2019-TO-BE
+
+### :gift: Added
+- `toEither` as pure function for `Maybe`
+- `toEither` as method for `Maybe`
+- `toMaybe` as pure function for `Either`
+- `toMaybe` as method for `Either`
+
+### :surfer: Changed
+- Fixed mistake in docs with link to interface `Maybe` or `Either` from pure function
+- Fixed mistakes in docs for calling pure functions in `Maybe` examples
+
 ## :bulb: [0.2.0] - 2019-05-21
 
 ### :gift: Added
