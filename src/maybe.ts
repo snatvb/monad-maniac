@@ -209,6 +209,21 @@ export interface Maybe<T> {
    * */
   equals(value: Maybe<T>): boolean
 
+  /**
+   * Converting `Maybe` to `Either`.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const just = Maybe.of(10)
+   * const nothing = Maybe.of<number>(null)
+   *
+   * just.toEither('error') // Either.Right(10)
+   * nothing.toEither('error') // Either.Left(error)
+   *
+   * ```
+   * @param leftValue the value will contains in `Either.Left`
+   */
   toEither<U>(leftValue: U): Either.Shape<U, T>
 }
 
