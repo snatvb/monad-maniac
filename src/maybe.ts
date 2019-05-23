@@ -1,5 +1,8 @@
 import * as helpers from './helpers'
+import * as Either from './either'
 import { Nullable } from './types'
+
+console.log(Either)
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
 
@@ -259,6 +262,10 @@ export function of<T>(value: T | null | undefined): Maybe<NonNullable<T>> {
   } else {
     return new Just(value as NonNullable<T>)
   }
+}
+
+export function noting<T>(): Maybe<NonNullable<T>> {
+  return new Nothing()
 }
 
   /**
