@@ -2,8 +2,6 @@ import * as helpers from './helpers'
 import * as Either from './either'
 import { Nullable } from './types'
 
-console.log(Either)
-
 type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
 
 type JoinMaybe<T> = T extends Maybe<any> ? T : Maybe<T>

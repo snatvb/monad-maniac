@@ -2,8 +2,6 @@ import * as helpers from './helpers'
 import * as Maybe from './maybe'
 import { Nullable } from './types'
 
-console.log(Maybe)
-
 /** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
   Right: (value: R) => U,

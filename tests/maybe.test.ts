@@ -417,6 +417,14 @@ describe('Just and Nothing', () => {
     expect(nothing.equalsValue(null)).toBeTruthy()
   })
 
+  it('toEither', () => {
+    const just = Maybe.of(10)
+    const nothing = Maybe.of<number>(null)
+
+    expect(just.toEither('error').toString()).toBe('Right(10)')
+    expect(nothing.toEither('error').toString()).toBe('Left(error)')
+  })
+
   describe('Just', () => {
     it('isNothing', () => {
       const just = Maybe.of(5)

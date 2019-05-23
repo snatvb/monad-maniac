@@ -447,4 +447,17 @@ describe('Cases from docs', () => {
     expect(resultLeft).toBe(10)
     expect(resultRight).toBe(300)
   })
+
+  it('toMaybe', () => {
+    const left = Either.left<string, number>('Some Error')
+    const right = Either.right<string, number>(150)
+    const rightVoid = Either.right<string, number | void>(undefined)
+
+    const resultLeft = left.toMaybe() // Nothing()
+    const resultRight = right.toMaybe() // Just(150)
+    const resultRightVoid = rightVoid.toMaybe() // Nothing()
+    expect(resultLeft.toString()).toBe('Nothing()')
+    expect(resultRight.toString()).toBe('Just(150)')
+    expect(resultRightVoid.toString()).toBe('Nothing()')
+  })
 })
