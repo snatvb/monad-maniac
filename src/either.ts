@@ -546,6 +546,24 @@ export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either?: Either<L, R>)
   return helpers.curry1(op, either)
 }
 
+/**
+ * Method like [`Either.toMaybe`](../interfaces/_either_.shape.html#tomaybe)
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const left = Either.left<string, number>('error')
+ * const right = Either.right<string, number>(144)
+ *
+ * const nothing = Either.toMaybe(left)
+ * const just = Either.toMaybe(right)
+ *
+ * ```
+ * */
+export function toMaybe<L, R>(either: Either<L, R>): Maybe.Shape<R> {
+  return either.toMaybe()
+}
+
 export class Right<L ,R> implements Either<L ,R> {
   private value: R
 

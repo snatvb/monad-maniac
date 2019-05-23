@@ -171,6 +171,18 @@ describe('Either pure functions', () => {
     })
   })
 
+  describe('toMaybe', () => {
+
+    it('direct call', () => {
+      const left = Either.left<string, number>('error')
+      const right = Either.right<string, number>(144)
+      const nothing = Either.toMaybe(left)
+      const just = Either.toMaybe(right)
+      expect(nothing.toString()).toBe('Nothing()')
+      expect(just.toString()).toBe('Just(144)')
+    })
+  })
+
   describe('filter', () => {
     const predicate = (x: number) => x > 150
 
