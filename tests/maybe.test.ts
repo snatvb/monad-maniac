@@ -209,6 +209,28 @@ describe('Pure functions', () => {
     })
   })
 
+  describe('toEither', () => {
+    it('with value and null', () => {
+      const foo = Maybe.of(12)
+      const resultFoo = Maybe.map((x) => x * x, foo) // Just(144)
+      const eitherFoo = Maybe.toEither('Some Error', resultFoo) // Either.Right(144)
+      const resultBar = Maybe.map((x) => x * x, foo).filter((x) => x < 100) // Nothing()
+      const eitherBar = Maybe.toEither('X greater than 100', resultBar) // Either.Left(X greater than 100)
+      expect(resultFoo.toString()).toBe('Just(144)')
+      expect(eitherFoo.toString()).toBe('Right(144)')
+      expect(resultBar.toString()).toBe('Nothing()')
+      expect(eitherBar.toString()).toBe('Left(X greater than 100)')
+    })
+
+    it('carried', () => {
+      const foo = Maybe.of(12)
+      const mapFoo = Maybe.map((x: number) => x * x) // Just(144)
+      const toEitherFoo = Maybe.toEither('Some Error')
+      const eitherFoo = toEitherFoo(mapFoo(foo)) // Either.Right(144)
+      expect(eitherFoo.toString()).toBe('Right(144)')
+    })
+  })
+
   describe('lift', () => {
     const find = <T>(predicate: (v: T) => boolean) => (list: T[]): T | void => {
       const fn = ([item, ...list]: T[]): T | void => {

@@ -279,6 +279,9 @@ export function of<T>(value: T | null | undefined): Maybe<NonNullable<T>> {
   }
 }
 
+/**
+ * Returns Nothing()
+ */
 export function nothing<T>(): Maybe<NonNullable<T>> {
   return new Nothing()
 }
@@ -338,7 +341,7 @@ export function apply<T, U extends ((value: T) => any)>(applicative: Maybe<U>, m
  * import { Maybe } from 'monad-maniac'
  *
  * const foo = Maybe.of(12)
- * const mappedFoo = Maybe.map(foo, (x) => x * x) // Just(144)
+ * const mappedFoo = Maybe.map((x) => x * x, foo) // Just(144)
  * ```
  * */
 export function map<T, U>(f: (value: T) => Nullable<U>, maybe: Maybe<T>): Maybe<NonNullable<U>>
@@ -405,7 +408,7 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: Maybe<T>): U | ((may
  * import { Maybe } from 'monad-maniac'
  *
  * const foo = Maybe.of(12)
- * const resultFoo = Maybe.chain(foo, (x) => x * x) // 144
+ * const resultFoo = Maybe.chain((x) => x * x, foo) // 144
  * ```
  * */
 export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
@@ -417,6 +420,32 @@ export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
 export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | Maybe<T>
 export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | Maybe<T> | ((maybe: Maybe<T>) => U | Maybe<T>) {
   const op = (m: Maybe<T>) => m.chain(f)
+  return helpers.curry1(op, maybe)
+}
+
+/**
+ * Method like [`Maybe.toEither`](../interfaces/_maybe_.maybeshape.html#toeither)
+ * but to get maybe and call method `toEither` with a left value.
+ *
+ * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const foo = Maybe.of(12)
+ * const resultFoo = Maybe.map((x) => x * x, foo) // Just(144)
+ * const eitherFoo = Maybe.toEither('Some Error', resultFoo) // Either.Right(144)
+ * const resultBar = Maybe.map((x) => x * x, foo).filter((x) => x < 100) // Nothing()
+ * const eitherBar = Maybe.toEither('X greater than 100', resultBar) // Either.Left(X greater than 100)
+ * ```
+ * */
+export function toEither<U, T>(leftValue: U, maybe: Maybe<T>): Either.Either<U, T>
+/**
+ * Just curried `toEither`.
+ *
+ * _(a -> b) -> Maybe(a) -> b_
+ */
+export function toEither<U, T>(leftValue: U): (maybe: Maybe<T>) => Either.Either<U, T>
+export function toEither<U, T>(leftValue: U, maybe?: Maybe<T>): Either.Either<U, T> | ((maybe: Maybe<T>) => Either.Either<U, T>) {
+  const op = (m: Maybe<T>) => m.toEither(leftValue)
   return helpers.curry1(op, maybe)
 }
 
