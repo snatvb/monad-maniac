@@ -208,6 +208,8 @@ export interface Maybe<T> {
    * ```
    * */
   equals(value: Maybe<T>): boolean
+
+  toEither<U>(leftValue: U): Either.Shape<U, T>
 }
 
 export type Shape<T> = Maybe<T>
@@ -573,6 +575,10 @@ export class Just<T> implements Maybe<T> {
       Nothing: () => false,
     })
   }
+
+  toEither<U>(_leftValue: U): Either.Shape<U, T> {
+    return Either.right(this.value)
+  }
 }
 
 export class Nothing<T> implements Maybe<T> {
@@ -636,5 +642,9 @@ export class Nothing<T> implements Maybe<T> {
       Just: () => false,
       Nothing: () => true,
     })
+  }
+
+  toEither<U>(leftValue: U): Either.Shape<U, T> {
+    return Either.left(leftValue)
   }
 }
