@@ -270,6 +270,12 @@ describe('Pure functions', () => {
       expect(resultNothing.caseOf(matcher)).toBe('UNKNOWN')
     })
   })
+
+  describe('nothing', () => {
+    it('just call the function', () => {
+      expect(Maybe.nothing().toString()).toBe('Nothing()')
+    })
+  })
 })
 
 describe('Just and Nothing', () => {

@@ -635,6 +635,6 @@ export class Left<L, R> implements  Either<L, R> {
     return matcher.Left(this.value)
   }
   toMaybe(): Maybe.Shape<R> {
-    return Maybe.noting()
+    return Maybe.nothing()
   }
 }

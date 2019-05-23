@@ -279,7 +279,7 @@ export function of<T>(value: T | null | undefined): Maybe<NonNullable<T>> {
   }
 }
 
-export function noting<T>(): Maybe<NonNullable<T>> {
+export function nothing<T>(): Maybe<NonNullable<T>> {
   return new Nothing()
 }
 
