@@ -391,7 +391,7 @@ export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args?: any[])
 }
 
 /**
- * Method like [`Either.map`](../interfaces/_either_.shape.html#map)
+ * Method like [`Either.map`](../interfaces/_either_.either.html#map)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -423,7 +423,7 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
 }
 
 /**
- * Method like [`Either.chain`](../interfaces/_either_.shape.html#chain)
+ * Method like [`Either.chain`](../interfaces/_either_.either.html#chain)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -446,7 +446,7 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Eithe
 }
 
 /**
- * Method like [`Either.orElse`](../interfaces/_either_.shape.html#orelse)
+ * Method like [`Either.orElse`](../interfaces/_either_.either.html#orelse)
  *
  * Apple some function to `Left` value.
  *
@@ -472,7 +472,7 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
 }
 
 /**
- * Method like [`Either.filter`](../interfaces/_either_.shape.html#filter)
+ * Method like [`Either.filter`](../interfaces/_either_.either.html#filter)
  *
  * Apple some function to `Right` value and if the function
  * returns not `true` then value will be placed to `Left`.
@@ -496,7 +496,7 @@ export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L
 }
 
 /**
- * Method like [`Either.getOrElse`](../interfaces/_either_.shape.html#getorelse)
+ * Method like [`Either.getOrElse`](../interfaces/_either_.either.html#getorelse)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -519,7 +519,7 @@ export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | 
 }
 
 /**
- * Method like [`Either.caseOf`](../interfaces/_either_.shape.html#caseof)
+ * Method like [`Either.caseOf`](../interfaces/_either_.either.html#caseof)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -547,7 +547,7 @@ export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either?: Either<L, R>)
 }
 
 /**
- * Method like [`Either.toMaybe`](../interfaces/_either_.shape.html#tomaybe)
+ * Method like [`Either.toMaybe`](../interfaces/_either_.either.html#tomaybe)
  *
  * ```ts
  * import { Either } from 'monad-maniac'

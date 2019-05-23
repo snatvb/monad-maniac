@@ -172,7 +172,6 @@ describe('Either pure functions', () => {
   })
 
   describe('toMaybe', () => {
-
     it('direct call', () => {
       const left = Either.left<string, number>('error')
       const right = Either.right<string, number>(144)
