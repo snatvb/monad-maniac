@@ -1,5 +1,8 @@
 import * as helpers from './helpers'
+import * as Maybe from './maybe'
 import { Nullable } from './types'
+
+console.log(Maybe)
 
 /** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
@@ -184,6 +187,24 @@ export interface Either<L, R> {
    * ```
    */
   caseOf<U>(matcher: CaseOf<L, R, U>): U
+    /**
+   * Converting `Either` to `Maybe`.
+   * If value in `Left` will returns `Nothing`, else
+   * returns result `Maybe.of` for value from `Right`.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<string, number>('Some Error')
+   * const right = Either.right<string, number>(150)
+   * const rightVoid = Either.right<string, number | void>(undefined)
+   *
+   * const resultLeft = left.toMaybe() // Nothing()
+   * const resultRight = right.toMaybe() // Just(150)
+   * const resultRightVoid = rightVoid.toMaybe() // Nothing()
+   * ```
+   */
+  toMaybe(): Maybe.Shape<R>
 }
 
 /** Alias of  [`Either.right`](../modules/_either_.html#right-2) */
@@ -570,6 +591,9 @@ export class Right<L ,R> implements Either<L ,R> {
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Right(this.value)
   }
+  toMaybe(): Maybe.Shape<R> {
+    return Maybe.of(this.value)
+  }
 }
 
 export class Left<L, R> implements  Either<L, R> {
@@ -611,5 +635,8 @@ export class Left<L, R> implements  Either<L, R> {
   }
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Left(this.value)
+  }
+  toMaybe(): Maybe.Shape<R> {
+    return Maybe.noting()
   }
 }
