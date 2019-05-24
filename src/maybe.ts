@@ -1,4 +1,5 @@
 import * as helpers from './helpers'
+import * as Either from './either'
 import { Nullable } from './types'
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
@@ -205,6 +206,23 @@ export interface Maybe<T> {
    * ```
    * */
   equals(value: Maybe<T>): boolean
+
+  /**
+   * Converting `Maybe` to `Either`.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const just = Maybe.of(10)
+   * const nothing = Maybe.of<number>(null)
+   *
+   * just.toEither('error') // Either.Right(10)
+   * nothing.toEither('error') // Either.Left(error)
+   *
+   * ```
+   * @param leftValue the value will contains in `Either.Left`
+   */
+  toEither<U>(leftValue: U): Either.Shape<U, T>
 }
 
 export type Shape<T> = Maybe<T>
@@ -213,7 +231,7 @@ export type MaybeShape<T> = Maybe<T>
 
 /**
  * Unwrap Maybe with default value.
- * Method like [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse)
+ * Method like [`Maybe.getOrElse`](../interfaces/_maybe_.maybe.html#getorelse)
  * but to get maybe and call method `getOrElse` with a function.
  *
  * ```ts
@@ -261,12 +279,19 @@ export function of<T>(value: T | null | undefined): Maybe<NonNullable<T>> {
   }
 }
 
+/**
+ * Returns Nothing()
+ */
+export function nothing<T>(): Maybe<NonNullable<T>> {
+  return new Nothing()
+}
+
   /**
    * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
    *
    *   _Maybe(Maybe a) -> Maybe a_
    *
-   * Method like [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join)
+   * Method like [`Maybe.join`](../interfaces/_maybe_.maybe.html#join)
    *
    * ```ts
    * import { Maybe } from 'monad-maniac'
@@ -286,7 +311,7 @@ export function join<T>(value: Maybe<T>): JoinMaybe<T> {
 }
 
 /**
- * Method like [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply)
+ * Method like [`Maybe.apply`](../interfaces/_maybe_.maybe.html#apply)
  * but to get maybe and call method `apply` with a function.
  *
  * ```ts
@@ -309,14 +334,14 @@ export function apply<T, U extends ((value: T) => any)>(applicative: Maybe<U>, m
 }
 
 /**
- * Method like [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map)
+ * Method like [`Maybe.map`](../interfaces/_maybe_.maybe.html#map)
  * but to get maybe and call method `map` with a function.
  *
  * ```ts
  * import { Maybe } from 'monad-maniac'
  *
  * const foo = Maybe.of(12)
- * const mappedFoo = Maybe.map(foo, (x) => x * x) // Just(144)
+ * const mappedFoo = Maybe.map((x) => x * x, foo) // Just(144)
  * ```
  * */
 export function map<T, U>(f: (value: T) => Nullable<U>, maybe: Maybe<T>): Maybe<NonNullable<U>>
@@ -332,7 +357,7 @@ export function map<T, U>(f: (value: T) => Nullable<U>, maybe?: Maybe<T>): Maybe
 }
 
 /**
- * Method like [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof)
+ * Method like [`Maybe.caseOf`](../interfaces/_maybe_.maybe.html#caseof)
  * but to get maybe and call method `caseOf` with a function.
  *
    * ```ts
@@ -376,14 +401,14 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: Maybe<T>): U | ((may
 }
 
 /**
- * Method like [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain)
+ * Method like [`Maybe.chain`](../interfaces/_maybe_.maybe.html#chain)
  * but to get maybe and call method `chain` with a function.
  *
  * ```ts
  * import { Maybe } from 'monad-maniac'
  *
  * const foo = Maybe.of(12)
- * const resultFoo = Maybe.chain(foo, (x) => x * x) // 144
+ * const resultFoo = Maybe.chain((x) => x * x, foo) // 144
  * ```
  * */
 export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
@@ -395,6 +420,32 @@ export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
 export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | Maybe<T>
 export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | Maybe<T> | ((maybe: Maybe<T>) => U | Maybe<T>) {
   const op = (m: Maybe<T>) => m.chain(f)
+  return helpers.curry1(op, maybe)
+}
+
+/**
+ * Method like [`Maybe.toEither`](../interfaces/_maybe_.maybe.html#toeither)
+ * but to get maybe and call method `toEither` with a left value.
+ *
+ * ```ts
+ * import { Maybe } from 'monad-maniac'
+ *
+ * const foo = Maybe.of(12)
+ * const resultFoo = Maybe.map((x) => x * x, foo) // Just(144)
+ * const eitherFoo = Maybe.toEither('Some Error', resultFoo) // Either.Right(144)
+ * const resultBar = Maybe.map((x) => x * x, foo).filter((x) => x < 100) // Nothing()
+ * const eitherBar = Maybe.toEither('X greater than 100', resultBar) // Either.Left(X greater than 100)
+ * ```
+ * */
+export function toEither<U, T>(leftValue: U, maybe: Maybe<T>): Either.Either<U, T>
+/**
+ * Just curried `toEither`.
+ *
+ * _(a -> b) -> Maybe(a) -> b_
+ */
+export function toEither<U, T>(leftValue: U): (maybe: Maybe<T>) => Either.Either<U, T>
+export function toEither<U, T>(leftValue: U, maybe?: Maybe<T>): Either.Either<U, T> | ((maybe: Maybe<T>) => Either.Either<U, T>) {
+  const op = (m: Maybe<T>) => m.toEither(leftValue)
   return helpers.curry1(op, maybe)
 }
 
@@ -446,7 +497,7 @@ export function lift<T, U>(f: (value: T) => Nullable<U>, value?: Nullable<T>): M
 
 
 /**
- * Method like [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals)
+ * Method like [`Maybe.equals`](../interfaces/_maybe_.maybe.html#equals)
  * but to get maybe and call method `equals` with a function.
   *
   * ```ts
@@ -473,7 +524,7 @@ export function equals<T>(maybeA: Maybe<T>, maybeB?: Maybe<T>): boolean | ((mayb
 }
 
 /**
- * Method like [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue)
+ * Method like [`Maybe.equalsValue`](../interfaces/_maybe_.maybe.html#equalsvalue)
  * but to get maybe and call method `equalsValue` with a function.
   *
   * ```ts
@@ -505,7 +556,7 @@ export class Just<T> implements Maybe<T> {
     this.value = value as NonNullable<T>
   }
 
-  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map) */
+  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybe.html#map) */
   map<U>(f: (value: NonNullable<T>) => U): Maybe<NonNullable<U>> {
     return of(f(this.value))
   }
@@ -520,12 +571,12 @@ export class Just<T> implements Maybe<T> {
     return false
   }
 
-  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
+  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybe.html#getorelse) */
   getOrElse<U>(_defaultValue: U): T | U {
     return this.value
   }
 
-  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
+  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybe.html#chain) */
   chain<U>(f: (value: T) => U): U {
     return f(this.value)
   }
@@ -534,42 +585,46 @@ export class Just<T> implements Maybe<T> {
     return f(this.value) === false ? new Nothing() : this
   }
 
-  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
+  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybe.html#tostring) */
   toString(): string {
     return `Just(${String(this.value)})`
   }
 
-  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
+  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybe.html#apply) */
   apply<U extends ((value: T) => any)>(maybe: Maybe<U>): ApplicativeResult<T, U> {
     return maybe.map((fn) => fn(this.value))
   }
 
-  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
+  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybe.html#caseof) */
   caseOf<U>(matcher: CaseOf<T, U>): U {
     return matcher.Just(this.value)
   }
 
-  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join) */
+  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybe.html#join) */
   join(): JoinMaybe<T> {
     return (this.value instanceof Just ? this.value : new Nothing()) as JoinMaybe<T>
   }
 
-  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
+  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybe.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return this.value === value
   }
 
-  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
+  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybe.html#equals) */
   equals(value: Maybe<T>): boolean {
     return value.caseOf({
       Just: (x) => x === this.value,
       Nothing: () => false,
     })
   }
+
+  toEither<U>(_leftValue: U): Either.Shape<U, T> {
+    return Either.right(this.value)
+  }
 }
 
 export class Nothing<T> implements Maybe<T> {
-  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybeshape.html#map) */
+  /** Method implements from [`Maybe.map`](../interfaces/_maybe_.maybe.html#map) */
   map<U>(_f: (value: NonNullable<T>) => U): Maybe<NonNullable<U>> {
     return new Nothing()
   }
@@ -584,12 +639,12 @@ export class Nothing<T> implements Maybe<T> {
     return true
   }
 
-  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybeshape.html#getorelse) */
+  /**  Method implements from [`Maybe.getOrElse`](../interfaces/_maybe_.maybe.html#getorelse) */
   getOrElse<U>(defaultValue: U): T | U {
     return defaultValue
   }
 
-  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
+  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybe.html#chain) */
   chain<U>(_f: (value: T) => U): Maybe<T> {
     return this
   }
@@ -598,36 +653,40 @@ export class Nothing<T> implements Maybe<T> {
     return this
   }
 
-  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybeshape.html#tostring) */
+  /**  Method implements from [`Maybe.toString`](../interfaces/_maybe_.maybe.html#tostring) */
   toString(): string {
     return 'Nothing()'
   }
 
-  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybeshape.html#apply) */
+  /** Method implements from [`Maybe.apply`](../interfaces/_maybe_.maybe.html#apply) */
   apply<U extends ((value: T) => any)>(_maybe: Maybe<U>): ApplicativeResult<T, U> {
     return new Nothing()
   }
 
-  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybeshape.html#caseof) */
+  /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybe.html#caseof) */
   caseOf<U>(matcher: CaseOf<T, U>): U {
     return matcher.Nothing()
   }
 
-  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybeshape.html#join) */
+  /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybe.html#join) */
   join(): JoinMaybe<T> {
     return new Nothing() as JoinMaybe<T>
   }
 
-  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybeshape.html#equalsvalue) */
+  /** Method implements from [`Maybe.equalsValue`](../interfaces/_maybe_.maybe.html#equalsvalue) */
   equalsValue(value: Nullable<T>): boolean {
     return value === undefined || value === null
   }
 
-  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybeshape.html#equals) */
+  /** Method implements from [`Maybe.equals`](../interfaces/_maybe_.maybe.html#equals) */
   equals(value: Maybe<T>): boolean {
     return value.caseOf({
       Just: () => false,
       Nothing: () => true,
     })
+  }
+
+  toEither<U>(leftValue: U): Either.Shape<U, T> {
+    return Either.left(leftValue)
   }
 }
