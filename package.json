@@ -14,7 +14,7 @@
     "test": "jest",
     "tests": "yarn test && yarn smoke-test",
     "smoke-test": "rimraf smoke-test && node smoke-test.js && rimraf smoke-test",
-    "prepublishOnly": "yarn tests && yarn build",
+    "prepublishOnly": "yarn build && yarn tests",
     "postpublish": "yarn clean"
   },
   "keywords": [
