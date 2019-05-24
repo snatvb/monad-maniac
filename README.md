@@ -86,7 +86,7 @@ const greeting = user
   .getOrElse('No-one to greet... :(')
 ```
 
-### How use it?
+### How to use it?
 
 #### of
 `of` - factory function for `Maybe`.
