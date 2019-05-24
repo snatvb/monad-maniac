@@ -1,0 +1,18 @@
+{
+  "include": [
+    "src/default/assets/js/src/**/*.ts",
+    "src/default/assets/js/src/~bootstrap.ts"
+  ],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "amd",
+    "declaration": false,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "allowJs": true,
+    "outFile": "./src/default/assets/js/main.js",
+    "strict": true,
+    "alwaysStrict": false,
+    "noImplicitUseStrict": true
+  }
+}
