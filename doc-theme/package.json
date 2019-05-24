@@ -50,7 +50,8 @@
     "grunt-string-replace": "^1.0.0",
     "grunt-ts": "^6.0.0-beta.22",
     "rimraf": "^2.6.1",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "tar": ">=4.4.2"
   },
   "keywords": [
     "typescript",
