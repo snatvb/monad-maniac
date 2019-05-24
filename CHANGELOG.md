@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `toEither` as method for `Maybe`
 - `toMaybe` as pure function for `Either`
 - `toMaybe` as method for `Either`
+- `dark theme` for docs
 
 ### :surfer: Changed
 - Fixed mistake in docs with link to interface `Maybe` or `Either` from pure function
