@@ -1,4 +1,6 @@
+/** [[include:doc/io.md]] */
 
+/** Fix tsdoc */
 import { Functor } from './interfaces'
 
 export class IO<T extends (...args: any[]) => any> implements Functor<T> {
