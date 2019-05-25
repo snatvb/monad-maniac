@@ -1,5 +1,7 @@
 
-export class IO<T extends (...args: any[]) => any> {
+import { Functor } from './interfaces'
+
+export class IO<T extends (...args: any[]) => any> implements Functor<T> {
   private effect: T
 
   constructor(effect: T) {
@@ -19,6 +21,8 @@ export class IO<T extends (...args: any[]) => any> {
   }
 
 }
+
+export interface Shape<T extends (...args: any[]) => any> extends IO<T> {}
 
 export function of<T>(value: T) {
   return new IO(() => value)

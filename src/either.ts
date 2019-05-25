@@ -1,6 +1,7 @@
 import * as helpers from './helpers'
 import * as Maybe from './maybe'
 import { Nullable } from './types'
+import { Functor } from './interfaces'
 
 /** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
@@ -11,7 +12,7 @@ export type CaseOf<L, R, U> = {
 /** This is alias for normal display from context (`Either.Either` => `Either.Shape`) */
 export type Shape<L, R> = Either<L, R>
 
-export interface Either<L, R> {
+export interface Either<L, R> extends Functor<R> {
   /**
    * Apply some function to value in container. `map` for `Right`
    * will call the function with value, for `Left` return `Left`.
