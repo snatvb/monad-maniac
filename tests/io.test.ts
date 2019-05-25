@@ -1,5 +1,17 @@
 import { Either, IO } from '../src'
 
+describe('Pure functions', () => {
+  it('of', () => {
+    expect(IO.of(222).run()).toBe(222)
+    expect(IO.of(4).map((x) => x * x).run()).toBe(16)
+  })
+
+  it('from', () => {
+    expect(IO.from(() => 222).run()).toBe(222)
+    expect(IO.from(() => 4).map((x) => x * x).run()).toBe(16)
+  })
+})
+
 describe('Docs', () => {
   it('map', () => {
     type SideEffectDataType = { [id: number]: string }
