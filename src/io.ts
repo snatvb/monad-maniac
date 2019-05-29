@@ -66,3 +66,20 @@ export function map<T extends (...args: any[]) => any, U>(fn: (value: ReturnType
   const op = (functor: IO<T>) => functor.map(fn)
   return helpers.curry1(op, io)
 }
+
+/**
+ * Method like [`IO.chain`](../interfaces/_io_.io.html#chain)
+ * but to get `IO` and call method `chain` with a function.
+ *
+ * */
+export function chain<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U, io: IO<T>): U
+/**
+ * Just curried `chain`.
+ *
+ * _(a -> b) -> IO(a) -> b_
+ */
+export function chain<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U): (io: IO<T>) => U
+export function chain<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U, io?: IO<T>): U | ((io: IO<T>) => U) {
+  const op = (functor: IO<T>) => functor.chain(fn)
+  return helpers.curry1(op, io)
+}
