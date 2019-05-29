@@ -10,9 +10,9 @@ import { Either, IO } from 'monad-maniac'
 
 type SideEffectDataType = { [id: number]: string }
 let SideEffectData: SideEffectDataType = {
-1: 'Jake',
-2: 'Bob',
-3: 'Alice',
+  1: 'Jake',
+  2: 'Bob',
+  3: 'Alice',
 }
 
 const logError = (...args: any[]) => console.error('Got error:', ...args)
@@ -31,7 +31,7 @@ return name.caseOf({
     return error
   },
   Right: (name) => SideEffectData[id] = name,
-})
+  })
 }
 
 const addFired = (name: string) => `${name} was fired!`
