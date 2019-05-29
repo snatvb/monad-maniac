@@ -2,6 +2,7 @@
 
 /** Fix tsdoc */
 import { Functor } from './interfaces'
+import * as helpers from './helpers'
 
 export class IO<T extends (...args: any[]) => any> implements Functor<T> {
   private effect: T
@@ -47,4 +48,21 @@ export function of<T>(value: T) {
 /** Making `IO` monad from function */
 export function from(fn: (...args: any[]) => any) {
   return new IO(fn)
+}
+
+/**
+ * Method like [`IO.map`](../interfaces/_io_.io.html#map)
+ * but to get `IO` and call method `map` with a function.
+ *
+ * */
+export function map<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U, io: IO<T>): IO<() => U>
+/**
+ * Just curried `map`.
+ *
+ * _(a -> b) -> IO(a) -> IO(b)_
+ */
+export function map<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U): (io: IO<T>) => IO<() => U>
+export function map<T extends (...args: any[]) => any, U>(fn: (value: ReturnType<T>) => U, io?: IO<T>): IO<() => U> | ((io: IO<T>) => IO<() => U>) {
+  const op = (functor: IO<T>) => functor.map(fn)
+  return helpers.curry1(op, io)
 }
