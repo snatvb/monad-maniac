@@ -13,7 +13,7 @@ describe('Pure functions', () => {
 })
 
 describe('Docs', () => {
-  it('map', () => {
+  it('map and chain', () => {
     type SideEffectDataType = { [id: number]: string }
     let SideEffectData: SideEffectDataType = {
      1: 'Jake',
@@ -54,6 +54,49 @@ describe('Docs', () => {
 
     expect(result).toBe('Jake was fired!')
     expect(resultFailure).toBe('Name not found')
+    expect(SideEffectData).toEqual({
+      1: 'Jake was fired!',
+      2: 'Bob',
+      3: 'Alice',
+     })
+  })
+})
+
+describe('Pure functions', () => {
+  type SideEffectDataType = { [id: number]: string }
+  let SideEffectData: SideEffectDataType = {
+   1: 'Jake',
+   2: 'Bob',
+   3: 'Alice',
+  }
+
+  const logError = (...args: any[]) => args
+
+  const readName = (id: number) => (): Either.Shape<string, string> => {
+   const name = SideEffectData[id]
+   return name
+     ? Either.right(name)
+     : Either.left('Name not found')
+  }
+
+  const writeName = (id: number) => (name: Either.Shape<string, string>) => {
+   return name.caseOf({
+     Left: (error) => {
+      logError(error)
+      return error
+     },
+     Right: (name) => SideEffectData[id] = name,
+   })
+  }
+  it('map and chain', () => {
+    const addFired = (name: string) => `${name} was fired!`
+
+    const readedIO = IO.from(readName(1))
+
+    const resultAddedFired = IO.map((name) => name.map(addFired), readedIO)
+    const result = IO.chain(writeName(1), resultAddedFired)
+
+    expect(result).toBe('Jake was fired!')
     expect(SideEffectData).toEqual({
       1: 'Jake was fired!',
       2: 'Bob',
