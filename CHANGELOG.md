@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] :bomb:
 
+## :bulb: [0.4.0] - 2019-06-01
+
+### :gift: Added
+- `IO` monad
+
 ## :bulb: [0.3.0] - 2019-05-24
 
 ### :gift: Added
