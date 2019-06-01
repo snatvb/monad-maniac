@@ -28,7 +28,7 @@ export class IO<T extends (...args: any[]) => any> implements Functor<T> {
   }
 
   /** To run function from `IO` */
-  run() {
+  run(): ReturnType<T> {
     return this.effect()
   }
 
@@ -48,6 +48,11 @@ export function of<T>(value: T) {
 /** Making `IO` monad from function */
 export function from(fn: (...args: any[]) => any) {
   return new IO(fn)
+}
+
+/** Calling method `run` from `IO` instance */
+export function run<T extends (...args: any[]) => any>(io: IO<T>): ReturnType<T> {
+  return io.run()
 }
 
 /**

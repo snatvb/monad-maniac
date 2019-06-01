@@ -10,6 +10,11 @@ describe('Pure functions', () => {
     expect(IO.from(() => 222).run()).toBe(222)
     expect(IO.from(() => 4).map((x) => x * x).run()).toBe(16)
   })
+
+  it('run', () => {
+    const io = IO.from(() => 222)
+    expect(IO.run(io)).toBe(222)
+  })
 })
 
 describe('Docs', () => {
