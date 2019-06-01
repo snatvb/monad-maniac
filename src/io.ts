@@ -32,6 +32,11 @@ export class IO<T extends (...args: any[]) => any> implements Functor<T> {
     return this.effect()
   }
 
+  /** Just returns `IO` as string */
+  toString(): string {
+    return 'IO'
+  }
+
 }
 
 /** This need just use with context `IO.Shape<T>` instead of `IO.IO<T>` */
@@ -53,6 +58,11 @@ export function from(fn: (...args: any[]) => any) {
 /** Calling method `run` from `IO` instance */
 export function run<T extends (...args: any[]) => any>(io: IO<T>): ReturnType<T> {
   return io.run()
+}
+
+/** Calling method `toString` from `IO` instance */
+export function toString<T extends (...args: any[]) => any>(io: IO<T>): string {
+  return io.toString()
 }
 
 /**

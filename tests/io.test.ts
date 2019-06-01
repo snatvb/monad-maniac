@@ -15,6 +15,11 @@ describe('Pure functions', () => {
     const io = IO.from(() => 222)
     expect(IO.run(io)).toBe(222)
   })
+
+  it('toString', () => {
+    const io = IO.from(() => 222)
+    expect(IO.toString(io)).toBe('IO')
+  })
 })
 
 describe('Docs', () => {
@@ -101,6 +106,7 @@ describe('Pure functions', () => {
     const resultAddedFired = IO.map((name) => name.map(addFired), readedIO)
     const result = IO.chain(writeName(1), resultAddedFired)
 
+    expect(readedIO.toString()).toBe('IO')
     expect(result).toBe('Jake was fired!')
     expect(SideEffectData).toEqual({
       1: 'Jake was fired!',
