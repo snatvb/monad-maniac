@@ -1,6 +1,7 @@
 import * as helpers from './helpers'
 import * as Either from './either'
 import { Nullable } from './types'
+import { Functor, Applicative } from './interfaces'
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
 
@@ -18,7 +19,7 @@ export type CaseOf<T, U> = {
   Nothing: () => U,
 }
 
-export interface Maybe<T> {
+export interface Maybe<T> extends Functor<T>, Applicative<T> {
   /**
    * Apply some function to value in container. `map` for Just
    * will call the function with value, for `Nothing` return Nothing.
