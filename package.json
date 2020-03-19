@@ -1,6 +1,6 @@
 {
   "name": "monad-maniac",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "monads with right rules",
   "scripts": {
     "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
@@ -14,7 +14,7 @@
     "test": "jest",
     "tests": "yarn test && yarn smoke-test",
     "smoke-test": "rimraf smoke-test && node smoke-test.js && rimraf smoke-test",
-    "prepublishOnly": "yarn tests && yarn build",
+    "prepublishOnly": "yarn build && yarn tests",
     "postpublish": "yarn clean"
   },
   "keywords": [
@@ -62,11 +62,11 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.13",
+    "coveralls": "3.0.3",
     "jest": "24.8.0",
     "rimraf": "2.6.3",
     "ts-jest": "24.0.2",
     "typedoc": "0.14.2",
-    "typescript": "3.4.5",
-    "coveralls": "3.0.3"
+    "typescript": "3.4.5"
   }
 }

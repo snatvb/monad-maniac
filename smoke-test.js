@@ -12,17 +12,25 @@ const writeFile = promisify(fs.writeFile);
 const assert = require('assert');
 
 const code = `
-const { Maybe } = require('monad-maniac')
+const { Maybe, Either } = require('monad-maniac')
 
 const double = (x) => x * 2
 const just = Maybe.of(10)
 const nothing = Maybe.of(null)
+console.log(Either)
 
 if (just.map(double).toString() !== 'Just(20)') {
   throw new Error('Not Just(20)')
 }
 if (nothing.map(double).toString() !== 'Nothing()') {
   throw new Error('Not Nothing()')
+}
+
+if (Either.left('Some error').toString() !== 'Left(Some error)') {
+  throw new Error('Not Left(Some error)')
+}
+if (Either.right('Some value').toString() !== 'Right(Some value)') {
+  throw new Error('Not Right(Some value)')
 }
 `
 

@@ -1,4 +1,5 @@
 import * as helpers from './helpers'
+import * as Maybe from './maybe'
 import { Nullable } from './types'
 
 /** Mather type for caseOf */
@@ -184,6 +185,24 @@ export interface Either<L, R> {
    * ```
    */
   caseOf<U>(matcher: CaseOf<L, R, U>): U
+    /**
+   * Converting `Either` to `Maybe`.
+   * If value in `Left` will returns `Nothing`, else
+   * returns result `Maybe.of` for value from `Right`.
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const left = Either.left<string, number>('Some Error')
+   * const right = Either.right<string, number>(150)
+   * const rightVoid = Either.right<string, number | void>(undefined)
+   *
+   * const resultLeft = left.toMaybe() // Nothing()
+   * const resultRight = right.toMaybe() // Just(150)
+   * const resultRightVoid = rightVoid.toMaybe() // Nothing()
+   * ```
+   */
+  toMaybe(): Maybe.Shape<R>
 }
 
 /** Alias of  [`Either.right`](../modules/_either_.html#right-2) */
@@ -372,7 +391,7 @@ export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args?: any[])
 }
 
 /**
- * Method like [`Either.map`](../interfaces/_either_.shape.html#map)
+ * Method like [`Either.map`](../interfaces/_either_.either.html#map)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -404,7 +423,7 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
 }
 
 /**
- * Method like [`Either.chain`](../interfaces/_either_.shape.html#chain)
+ * Method like [`Either.chain`](../interfaces/_either_.either.html#chain)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -427,7 +446,7 @@ export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Eithe
 }
 
 /**
- * Method like [`Either.orElse`](../interfaces/_either_.shape.html#orelse)
+ * Method like [`Either.orElse`](../interfaces/_either_.either.html#orelse)
  *
  * Apple some function to `Left` value.
  *
@@ -453,7 +472,7 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
 }
 
 /**
- * Method like [`Either.filter`](../interfaces/_either_.shape.html#filter)
+ * Method like [`Either.filter`](../interfaces/_either_.either.html#filter)
  *
  * Apple some function to `Right` value and if the function
  * returns not `true` then value will be placed to `Left`.
@@ -477,7 +496,7 @@ export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L
 }
 
 /**
- * Method like [`Either.getOrElse`](../interfaces/_either_.shape.html#getorelse)
+ * Method like [`Either.getOrElse`](../interfaces/_either_.either.html#getorelse)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -500,7 +519,7 @@ export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | 
 }
 
 /**
- * Method like [`Either.caseOf`](../interfaces/_either_.shape.html#caseof)
+ * Method like [`Either.caseOf`](../interfaces/_either_.either.html#caseof)
  *
  * ```ts
  * import { Either } from 'monad-maniac'
@@ -525,6 +544,24 @@ export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>): (either: Either<L, R>
 export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either?: Either<L, R>): U | ((either: Either<L, R>) => U) {
   const op = (either: Either<L, R>) => either.caseOf(matcher)
   return helpers.curry1(op, either)
+}
+
+/**
+ * Method like [`Either.toMaybe`](../interfaces/_either_.either.html#tomaybe)
+ *
+ * ```ts
+ * import { Either } from 'monad-maniac'
+ *
+ * const left = Either.left<string, number>('error')
+ * const right = Either.right<string, number>(144)
+ *
+ * const nothing = Either.toMaybe(left)
+ * const just = Either.toMaybe(right)
+ *
+ * ```
+ * */
+export function toMaybe<L, R>(either: Either<L, R>): Maybe.Shape<R> {
+  return either.toMaybe()
 }
 
 export class Right<L ,R> implements Either<L ,R> {
@@ -570,6 +607,9 @@ export class Right<L ,R> implements Either<L ,R> {
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Right(this.value)
   }
+  toMaybe(): Maybe.Shape<R> {
+    return Maybe.of(this.value)
+  }
 }
 
 export class Left<L, R> implements  Either<L, R> {
@@ -611,5 +651,8 @@ export class Left<L, R> implements  Either<L, R> {
   }
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Left(this.value)
+  }
+  toMaybe(): Maybe.Shape<R> {
+    return Maybe.nothing()
   }
 }

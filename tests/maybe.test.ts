@@ -209,6 +209,28 @@ describe('Pure functions', () => {
     })
   })
 
+  describe('toEither', () => {
+    it('with value and null', () => {
+      const foo = Maybe.of(12)
+      const resultFoo = Maybe.map((x) => x * x, foo) // Just(144)
+      const eitherFoo = Maybe.toEither('Some Error', resultFoo) // Either.Right(144)
+      const resultBar = Maybe.map((x) => x * x, foo).filter((x) => x < 100) // Nothing()
+      const eitherBar = Maybe.toEither('X greater than 100', resultBar) // Either.Left(X greater than 100)
+      expect(resultFoo.toString()).toBe('Just(144)')
+      expect(eitherFoo.toString()).toBe('Right(144)')
+      expect(resultBar.toString()).toBe('Nothing()')
+      expect(eitherBar.toString()).toBe('Left(X greater than 100)')
+    })
+
+    it('carried', () => {
+      const foo = Maybe.of(12)
+      const mapFoo = Maybe.map((x: number) => x * x) // Just(144)
+      const toEitherFoo = Maybe.toEither('Some Error')
+      const eitherFoo = toEitherFoo(mapFoo(foo)) // Either.Right(144)
+      expect(eitherFoo.toString()).toBe('Right(144)')
+    })
+  })
+
   describe('lift', () => {
     const find = <T>(predicate: (v: T) => boolean) => (list: T[]): T | void => {
       const fn = ([item, ...list]: T[]): T | void => {
@@ -268,6 +290,12 @@ describe('Pure functions', () => {
 
       expect(resultJust.caseOf(matcher)).toBe('Jayson')
       expect(resultNothing.caseOf(matcher)).toBe('UNKNOWN')
+    })
+  })
+
+  describe('nothing', () => {
+    it('just call the function', () => {
+      expect(Maybe.nothing().toString()).toBe('Nothing()')
     })
   })
 })
@@ -410,6 +438,14 @@ describe('Just and Nothing', () => {
     expect(just.equalsValue(10)).toBeFalsy()
     expect(nothing.equalsValue(5)).toBeFalsy()
     expect(nothing.equalsValue(null)).toBeTruthy()
+  })
+
+  it('toEither', () => {
+    const just = Maybe.of(10)
+    const nothing = Maybe.of<number>(null)
+
+    expect(just.toEither('error').toString()).toBe('Right(10)')
+    expect(nothing.toEither('error').toString()).toBe('Left(error)')
   })
 
   describe('Just', () => {
