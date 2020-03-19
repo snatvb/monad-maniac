@@ -55,8 +55,8 @@ export interface Maybe<T> {
    *  .map((x) => x / 2) // 50
    *  .filter((x) => x > 1000) // Nothing() - next function will be called never
    *  .map((x) => x + 10) // 60
-   *  .chain((x) => x / 3) // 20 - actually the function will not be called
-   * console.log(result) // Nothing()
+   *  .chain((x) => x / 3) // NaN
+   * console.log(result) // NaN
    * ```
    */
   chain<U>(f: (value: T) => U): U
