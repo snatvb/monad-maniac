@@ -59,7 +59,7 @@ export interface Maybe<T> {
    * console.log(result) // Nothing()
    * ```
    */
-  chain<U>(f: (value: T) => U): U | Maybe<T>
+  chain<U>(f: (value: T) => U): U
 
   /** Return true if `Nothing` */
   isNothing(): boolean
@@ -590,8 +590,8 @@ export class Nothing<T> implements Maybe<T> {
   }
 
   /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
-  chain<U>(_f: (value: T) => U): Maybe<T> {
-    return this
+  chain<U>(_f: (value: T) => U): U {
+    return _f(undefined as unknown as T)
   }
 
   filter(_f: (value: T) => boolean): Maybe<T> {

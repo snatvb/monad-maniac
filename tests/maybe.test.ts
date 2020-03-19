@@ -62,15 +62,15 @@ describe('Pure functions', () => {
       expect(Maybe.chain(concat('bar'), just)).toBe('foobar')
     })
 
-    it('with null', () => {
+    it('with null and undefined', () => {
       const just = Maybe.of(234)
       const nothing = Maybe.of(null)
       const nothing2 = Maybe.of(undefined)
-      const chained1 = Maybe.chain(double, nothing)
-      const chained2 = Maybe.chain(double, nothing2)
+      const chained1 = Maybe.chain((x) => x, nothing)
+      const chained2 = Maybe.chain((x) => x, nothing2)
       expect(Maybe.chain(toNothing, just)).toBeUndefined()
-      expect(chained1  instanceof Maybe.Nothing).toBe(true)
-      expect(chained2  instanceof Maybe.Nothing).toBe(true)
+      expect(chained1).toBe(undefined)
+      expect(chained2).toBe(undefined)
     })
 
     it('carry', () => {
@@ -299,24 +299,19 @@ describe('Just and Nothing', () => {
 
   it('chain', () => {
     const just = Maybe.of(5)
+    const justString = Maybe.of('test')
+    const result = just.chain(() => justString)
+    result.map((x) => expect(x).toBe('test'))
     expect(just.toString()).toBe('Just(5)')
     expect(just.chain(double)).toBe(10)
     expect(just.map(double).chain(double)).toBe(20)
-    expect(just.map(double).map(double).map(toNothing).chain(double) instanceof Maybe.Nothing).toBe(true)
-    expect(
-      just
-        .map(double)
-        .map(double)
-        .map(toNothing)
-        .chain(double) instanceof Maybe.Nothing
-    ).toBe(true)
     expect(
       just
         .map(double)
         .map(double)
         .map(toNull)
-        .chain(double) instanceof Maybe.Nothing
-    ).toBe(true)
+        .chain(double)
+    ).toBeNaN()
   })
 
   it('getOrElse', () => {
