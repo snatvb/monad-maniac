@@ -1,5 +1,5 @@
-import * as helpers from './helpers'
 import * as Either from './either'
+import * as helpers from './helpers'
 import { Nullable } from './types'
 import { Functor, Applicative } from './interfaces'
 
@@ -57,11 +57,11 @@ export interface Maybe<T> extends Functor<T>, Applicative<T> {
    *  .map((x) => x / 2) // 50
    *  .filter((x) => x > 1000) // Nothing() - next function will be called never
    *  .map((x) => x + 10) // 60
-   *  .chain((x) => x / 3) // 20 - actually the function will not be called
-   * console.log(result) // Nothing()
+   *  .chain((x) => x / 3) // NaN
+   * console.log(result) // NaN
    * ```
    */
-  chain<U>(f: (value: T) => U): U | Maybe<T>
+  chain<U>(f: (value: T) => U): U
 
   /** Return true if `Nothing` */
   isNothing(): boolean
@@ -645,9 +645,9 @@ export class Nothing<T> implements Maybe<T> {
     return defaultValue
   }
 
-  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybe.html#chain) */
-  chain<U>(_f: (value: T) => U): Maybe<T> {
-    return this
+  /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
+  chain<U>(_f: (value: T) => U): U {
+    return _f(undefined as unknown as T)
   }
 
   filter(_f: (value: T) => boolean): Maybe<T> {

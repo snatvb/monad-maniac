@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] :bomb:
 
+## :bulb: [0.5.0] - 2020-03-20
+
+### :gift: Added
+- Link to `IO` in readme
+
+### :hammer: Fixed
+- `Maybe.chain` was fixed. The behaviour will be correct (like in readme).
+
 ## :bulb: [0.4.0] - 2019-06-01
 
 ### :gift: Added
