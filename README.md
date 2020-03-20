@@ -8,6 +8,7 @@
 - [Documentation](http://mm.snatvb.ru)
   * [Maybe](http://mm.snatvb.ru/modules/_maybe_.html)
   * [Either](http://mm.snatvb.ru/modules/_either_.html)
+  * [IO](http://mm.snatvb.ru/modules/_io_.html)
 - [Github](https://github.com/snatvb/monad-maniac)
 - [NPM](https://www.npmjs.com/package/monad-maniac)
 
