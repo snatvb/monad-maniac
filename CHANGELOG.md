@@ -65,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smoke test and really build to **Travis CI**.
 - Labels of `npm`, `coverage`, `travis`.
 
-[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.4.0...develop
+[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.5.0...develop
+[0.5.0]: https://github.com/snatvb/monad-maniac/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/snatvb/monad-maniac/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/snatvb/monad-maniac/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/snatvb/monad-maniac/compare/v0.1.0...v0.2.0
