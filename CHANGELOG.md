@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### :hammer: Fixed
 - `Maybe.chain` was fixed. The behaviour will be correct (like in readme).
 
+## :bulb: [0.4.0] - 2019-06-01
+
+### :gift: Added
+- Module `interfaces`
+- `IO` monad
+- `Functor` interface
+- `Applicative` interface
+
+### :surfer: Changed
+- `Maybe` implements `Functor` and `Applicative` interfaces
+- `Either` implements `Functor` interface
+
 ## :bulb: [0.3.0] - 2019-05-24
 
 ### :gift: Added
