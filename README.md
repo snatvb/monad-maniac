@@ -217,8 +217,8 @@ This function like `Maybe.map` but returns not `Maybe` but what will be result o
 import { Maybe } from 'monad-maniac'
 
 const just = Maybe.of(10)
-const divided = just.chain((x) => x / 2) // 5
-const none = just.chain((x) => x > 10000 ? x / 2 : undefined) // undefined
+const divided = just.chain((x) => Maybe.of(x / 2)) // 5
+const none = just.chain((x) => Maybe.of(x > 10000 ? x / 2 : undefined)) // Nothing()
 const maybeDivided = just.chain((x) => Maybe.of(x > 10000 ? x / 2 : undefined)) // Nothing()
 ```
 

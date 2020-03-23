@@ -1,7 +1,7 @@
 import * as Either from './either'
 import * as helpers from './helpers'
+import { Applicative, Functor } from './interfaces'
 import { Nullable } from './types'
-import { Functor, Applicative } from './interfaces'
 
 type ApplicativeResult<T, U extends ((value: T) => any)> = Maybe<ReturnType<U>>
 
@@ -49,19 +49,19 @@ export interface Maybe<T> extends Functor<T>, Applicative<T> {
    *  .of(100)
    *  .map((x) => x / 2) // 50
    *  .map((x) => x + 10) // 60
-   *  .chain((x) => x / 3) // 20
-   * console.log(result) // 20
+   *  .chain((x) => Maybe.of(x / 3)) // 20
+   * console.log(result) // Just(20)
    *
    * const resultBad = Maybe
    *  .of(100)
    *  .map((x) => x / 2) // 50
    *  .filter((x) => x > 1000) // Nothing() - next function will be called never
    *  .map((x) => x + 10) // 60
-   *  .chain((x) => x / 3) // NaN
-   * console.log(result) // NaN
+   *  .chain((x) => Maybe.of(x / 3)) // Nothing()
+   * console.log(result) // Nothing()
    * ```
    */
-  chain<U>(f: (value: T) => U): U
+  chain<U>(f: (value: T) => Maybe<U>): Maybe<U>
 
   /** Return true if `Nothing` */
   isNothing(): boolean
@@ -412,14 +412,14 @@ export function caseOf<T, U>(matcher: CaseOf<T, U>, maybe?: Maybe<T>): U | ((may
  * const resultFoo = Maybe.chain((x) => x * x, foo) // 144
  * ```
  * */
-export function chain<T, U>(f: (value: T) => U, maybe: Maybe<T>): U | Maybe<T>
+export function chain<T, U>(f: (value: T) => Maybe<U>, maybe: Maybe<T>): Maybe<U>
 /**
  * Just curried `chain`.
  *
  * _(a -> b) -> Maybe(a) -> b_
  */
-export function chain<T, U>(f: (value: T) => U): (maybe: Maybe<T>) => U | Maybe<T>
-export function chain<T, U>(f: (value: T) => U, maybe?: Maybe<T>): U | Maybe<T> | ((maybe: Maybe<T>) => U | Maybe<T>) {
+export function chain<T, U>(f: (value: T) => Maybe<U>): (maybe: Maybe<T>) => Maybe<U>
+export function chain<T, U>(f: (value: T) => Maybe<U>, maybe?: Maybe<T>): Maybe<U> | ((maybe: Maybe<T>) => Maybe<U>) {
   const op = (m: Maybe<T>) => m.chain(f)
   return helpers.curry1(op, maybe)
 }
@@ -578,7 +578,7 @@ export class Just<T> implements Maybe<T> {
   }
 
   /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybe.html#chain) */
-  chain<U>(f: (value: T) => U): U {
+  chain<U>(f: (value: T) => Maybe<U>): Maybe<U> {
     return f(this.value)
   }
 
@@ -646,8 +646,8 @@ export class Nothing<T> implements Maybe<T> {
   }
 
   /** Method implements from [`Maybe.chain`](../interfaces/_maybe_.maybeshape.html#chain) */
-  chain<U>(_f: (value: T) => U): U {
-    return _f(undefined as unknown as T)
+  chain<U>(_f: (value: T) => Maybe<U>): Maybe<U> {
+    return new Nothing()
   }
 
   filter(_f: (value: T) => boolean): Maybe<T> {

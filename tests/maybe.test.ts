@@ -1,8 +1,11 @@
 import { Maybe } from '../src'
 
 const double = (x: number): number => x * 2
+const doubleChain = (x: number) => Maybe.of(x * 2)
 const concat = (a: string) => (b: string): string => `${b}${a}`
+const concatChain = (a: string) => (b: string) => Maybe.of(`${b}${a}`)
 const toNothing = (): undefined | number => undefined
+const toNothingChain = () => Maybe.of(undefined)
 const toNull = (): null | number => null
 
 describe('Pure functions', () => {
@@ -59,25 +62,25 @@ describe('Pure functions', () => {
   describe('chain', () => {
     it('with value', () => {
       const just = Maybe.of('foo')
-      expect(Maybe.chain(concat('bar'), just)).toBe('foobar')
+      expect(Maybe.chain(concatChain('bar'), just).getOrElse(undefined)).toBe('foobar')
     })
 
     it('with null and undefined', () => {
       const just = Maybe.of(234)
       const nothing = Maybe.of(null)
       const nothing2 = Maybe.of(undefined)
-      const chained1 = Maybe.chain((x) => x, nothing)
-      const chained2 = Maybe.chain((x) => x, nothing2)
-      expect(Maybe.chain(toNothing, just)).toBeUndefined()
-      expect(chained1).toBe(undefined)
-      expect(chained2).toBe(undefined)
+      const chained1 = Maybe.chain((x) => Maybe.of(x), nothing)
+      const chained2 = Maybe.chain((x) => Maybe.of(x), nothing2)
+      expect(Maybe.chain(toNothingChain, just).getOrElse(undefined)).toBeUndefined()
+      expect(chained1.getOrElse(undefined)).toBe(undefined)
+      expect(chained2.getOrElse(undefined)).toBe(undefined)
     })
 
     it('carry', () => {
       const just = Maybe.of('foo')
-      const carried = Maybe.chain(concat('bar'))
+      const carried = Maybe.chain(concatChain('bar'))
       expect(typeof carried).toBe('function')
-      expect(carried(just)).toBe('foobar')
+      expect(carried(just).getOrElse(undefined)).toBe('foobar')
     })
   })
 
@@ -331,15 +334,16 @@ describe('Just and Nothing', () => {
     const result = just.chain(() => justString)
     result.map((x) => expect(x).toBe('test'))
     expect(just.toString()).toBe('Just(5)')
-    expect(just.chain(double)).toBe(10)
-    expect(just.map(double).chain(double)).toBe(20)
+    expect(just.chain(doubleChain).getOrElse(undefined)).toBe(10)
+    expect(just.map(double).chain(doubleChain).getOrElse(undefined)).toBe(20)
     expect(
       just
         .map(double)
         .map(double)
         .map(toNull)
-        .chain(double)
-    ).toBeNaN()
+        .chain(doubleChain)
+        .isNothing()
+    ).toBeTruthy()
   })
 
   it('getOrElse', () => {
