@@ -1,7 +1,7 @@
 import * as helpers from './helpers'
+import { Functor } from './interfaces'
 import * as Maybe from './maybe'
 import { Nullable } from './types'
-import { Functor } from './interfaces'
 
 /** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
@@ -83,7 +83,7 @@ export interface Either<L, R> extends Functor<R> {
    * ```
    * @param f Function to apply for Right value
    */
-  chain<U>(f: (value: R) => U): U | Either<L, U>
+  chain<U>(f: (value: R) => Either<L, U>): Either<L, U>
   /**
    * Apply predicate function to value in container.
    * If the function returns not `true` then value from
@@ -433,15 +433,17 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
  * const result: Either.Shape<string, string> = typeof name === 'string'
  *  ? new Either.Right(name)
  *  : new Either.Left('Server error')
- * const greeting = Either.chain((name) => `Welcome, ${name}!`, result) // 'Welcome, Jake' or 'Server error'
+ * const greeting = Either.chain(
+ *    (name: string) => Either.right(`Welcome, ${name}!`)
+ * ), result).get() // 'Welcome, Jake' or 'Server error'
  * ```
  * */
-export function chain<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L, U> | U
+export function chain<L, R, U>(f: (value: R) => Either<L, U>, either: Either<L, R>): Either<L, U>
 /**
  * Just curried `chain`.
  */
-export function chain<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => Either<L, U> | U
-export function chain<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<L, U> | U | ((either: Either<L, R>) => Either<L, U> | U) {
+export function chain<L, R, U>(f: (value: R) => Either<L, U>): (either: Either<L, R>) => Either<L, U>
+export function chain<L, R, U>(f: (value: R) => Either<L, U>, either?: Either<L, R>): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
   const op = (either: Either<L, R>) => either.chain(f)
   return helpers.curry1(op, either)
 }
@@ -580,7 +582,7 @@ export class Right<L ,R> implements Either<L ,R> {
     return this.value
   }
 
-  chain<U>(f: (value: R) => U): U | Either<L, U> {
+  chain<U>(f: (value: R) => Either<L, U>): Either<L, U> {
     return f(this.value)
   }
 
@@ -628,7 +630,7 @@ export class Left<L, R> implements  Either<L, R> {
     return f(this.value)
   }
 
-  chain<U>(_f: (value: R) => U): U | Either<L, U> {
+  chain<U>(_f: (value: R) => Either<L, U>): Either<L, U> {
     return new Left<L, U>(this.value)
   }
 

@@ -1,6 +1,8 @@
 import { Either } from '../src'
 
 const double = (x: number): number => x * 2
+const chainDouble = (x: number): Either.Shape<string, number> => Either.right(x * 2)
+const greetChain = (name: string): Either.Shape<string, string> => Either.right<string, string>(`Welcome, ${name}!`)
 
 describe('Either pure functions', () => {
   describe('of', () => {
@@ -84,19 +86,19 @@ describe('Either pure functions', () => {
     it('direct call', () => {
       const left: Either.Shape<string, number> = new Either.Left('Server error')
       const right: Either.Shape<string, number> = new Either.Right(150)
-      const leftResult = Either.chain(double, left)
+      const leftResult = Either.chain(chainDouble, left)
 
       expect(leftResult instanceof Either.Left).toBe(true)
-      expect(Either.chain(double, right)).toBe(300)
+      expect(Either.chain(chainDouble, right).get()).toBe(300)
     })
 
     it('carried', () => {
       const left: Either.Shape<string, number> = new Either.Left('Server error')
       const right: Either.Shape<string, number> = new Either.Right(150)
-      const leftResult = Either.chain(double)(left)
+      const leftResult = Either.chain(chainDouble)(left)
 
       expect(leftResult instanceof Either.Left).toBe(true)
-      expect(Either.chain(double)(right)).toBe(300)
+      expect(Either.chain(chainDouble)(right).get()).toBe(300)
     })
   })
 
@@ -280,8 +282,8 @@ describe('Either: Left & Right', () => {
     const left: Either.Shape<string, number> = new Either.Left('Server error')
     const right: Either.Shape<string, number> = new Either.Right(150)
 
-    expect(left.chain(double) instanceof Either.Left).toBe(true)
-    expect(right.chain(double)).toBe(300)
+    expect(left.chain(chainDouble).isLeft()).toBe(true)
+    expect(right.chain(chainDouble).isRight()).toBe(true)
   })
 
   it('getOrElse', () => {
@@ -344,10 +346,10 @@ describe('Either: Left & Right', () => {
 describe('Cases from docs', () => {
   it('map', () => {
     const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
-     if (divider === 0) {
-       return Either.left('Divider is zero!')
-     }
-     return Either.right(dividend / divider)
+      if (divider === 0) {
+        return Either.left('Divider is zero!')
+      }
+      return Either.right(dividend / divider)
     }
 
     const resultNormal = divide(10)(5).map(double).get() // 4
@@ -358,10 +360,10 @@ describe('Cases from docs', () => {
 
   it('chain', () => {
     const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
-     if (divider === 0) {
-       return Either.left('Divider is zero!')
-     }
-     return Either.right(dividend / divider)
+      if (divider === 0) {
+        return Either.left('Divider is zero!')
+      }
+      return Either.right(dividend / divider)
     }
 
     const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
@@ -470,5 +472,17 @@ describe('Cases from docs', () => {
     expect(resultLeft.toString()).toBe('Nothing()')
     expect(resultRight.toString()).toBe('Just(150)')
     expect(resultRightVoid.toString()).toBe('Nothing()')
+  })
+
+  // ========= DOC TESTS =========
+  it('Chain from doc', () => {
+
+    const greeting = Either.chain(greetChain, Either.right('Jake')).get()
+    expect(greeting).toBe('Welcome, Jake!')
+
+    // Server error
+
+    const serverError = Either.chain(greetChain, Either.left('Server error')).get()
+    expect(serverError).toBe('Server error')
   })
 })
