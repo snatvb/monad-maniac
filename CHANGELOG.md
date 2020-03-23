@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] :bomb:
 
+## :bulb: [0.5.1] - 2020-03-23
+
+### :hammer: Fixed
+- `Either.chain` was fixed. The behaviour will be correct.
+
 ## :bulb: [0.5.0] - 2020-03-20
 
 ### :gift: Added
@@ -65,7 +70,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smoke test and really build to **Travis CI**.
 - Labels of `npm`, `coverage`, `travis`.
 
-[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.5.0...develop
+[unreleased]: https://github.com/snatvb/monad-maniac/compare/v0.5.1...develop
+[0.5.1]: https://github.com/snatvb/monad-maniac/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/snatvb/monad-maniac/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/snatvb/monad-maniac/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/snatvb/monad-maniac/compare/v0.2.0...v0.3.0
