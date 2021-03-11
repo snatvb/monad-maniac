@@ -1,8 +1,10 @@
 import { Either } from '../src'
 
 const double = (x: number): number => x * 2
-const chainDouble = (x: number): Either.Shape<string, number> => Either.right(x * 2)
-const greetChain = (name: string): Either.Shape<string, string> => Either.right<string, string>(`Welcome, ${name}!`)
+const chainDouble = (x: number): Either.Shape<string, number> =>
+  Either.right(x * 2)
+const greetChain = (name: string): Either.Shape<string, string> =>
+  Either.right<string, string>(`Welcome, ${name}!`)
 
 describe('Either pure functions', () => {
   describe('of', () => {
@@ -14,7 +16,9 @@ describe('Either pure functions', () => {
 
   describe('left', () => {
     it('direct call', () => {
-      expect(Either.left<string, number>('Server Error').toString()).toBe('Left(Server Error)')
+      expect(Either.left<string, number>('Server Error').toString()).toBe(
+        'Left(Server Error)',
+      )
     })
   })
 
@@ -26,11 +30,23 @@ describe('Either pure functions', () => {
 
   describe('fromNullable', () => {
     it('direct call', () => {
-      expect(Either.fromNullable<string, number>(150).toString()).toBe('Right(150)')
-      expect(Either.fromNullable<string, string>('right').toString()).toBe('Right(right)')
-      expect(Either.fromNullable<string, string>(null).toString()).toBe('Left(null)')
-      expect(Either.fromNullable<string, string>(undefined).toString()).toBe('Left(undefined)')
-      expect(Either.fromNullable<string, string>(undefined).orElse(() => Either.of('gog')).toString()).toBe('Right(gog)')
+      expect(Either.fromNullable<string, number>(150).toString()).toBe(
+        'Right(150)',
+      )
+      expect(Either.fromNullable<string, string>('right').toString()).toBe(
+        'Right(right)',
+      )
+      expect(Either.fromNullable<string, string>(null).toString()).toBe(
+        'Left(null)',
+      )
+      expect(Either.fromNullable<string, string>(undefined).toString()).toBe(
+        'Left(undefined)',
+      )
+      expect(
+        Either.fromNullable<string, string>(undefined)
+          .orElse(() => Either.of('gog'))
+          .toString(),
+      ).toBe('Right(gog)')
     })
   })
 
@@ -59,6 +75,24 @@ describe('Either pure functions', () => {
 
       expect(Either.map(double)(left).get()).toBe('Server error')
       expect(Either.map(double)(right).get()).toBe(300)
+    })
+  })
+
+  describe('or', () => {
+    it('direct call', () => {
+      const left: Either.Shape<string, number> = new Either.Left('Server error')
+      const right: Either.Shape<string, number> = new Either.Right(150)
+
+      expect(
+        Either.map(double, left)
+          .or(() => 100)
+          .get(),
+      ).toBe(100)
+      expect(
+        Either.map(double, right)
+          .or(() => 100)
+          .get(),
+      ).toBe(300)
     })
   })
 
@@ -215,23 +249,32 @@ describe('Either pure functions', () => {
     }
 
     it('direct call', () => {
-      expect(Either.attempt(errorFunction, [0]).map(double).toString()).toBe('Left(Error: Number is zero!)')
-      expect(Either.attempt(errorFunction, [10]).map(double).toString()).toBe('Right(20)')
+      expect(Either.attempt(errorFunction, [0]).map(double).toString()).toBe(
+        'Left(Error: Number is zero!)',
+      )
+      expect(Either.attempt(errorFunction, [10]).map(double).toString()).toBe(
+        'Right(20)',
+      )
     })
 
     it('carried', () => {
-      expect(Either.attempt(errorFunction)([0]).map(double).toString()).toBe('Left(Error: Number is zero!)')
-      expect(Either.attempt(errorFunction)([10]).map(double).toString()).toBe('Right(20)')
+      expect(Either.attempt(errorFunction)([0]).map(double).toString()).toBe(
+        'Left(Error: Number is zero!)',
+      )
+      expect(Either.attempt(errorFunction)([10]).map(double).toString()).toBe(
+        'Right(20)',
+      )
     })
   })
 
   describe('asyncAttempt', () => {
-    const errorAsyncFunction = (x: number): Promise<number> => new Promise((resolve, reject) => {
-      if (x === 0) {
-        reject(new Error('Number is zero!'))
-      }
-      resolve(x)
-    })
+    const errorAsyncFunction = (x: number): Promise<number> =>
+      new Promise((resolve, reject) => {
+        if (x === 0) {
+          reject(new Error('Number is zero!'))
+        }
+        resolve(x)
+      })
 
     it('direct call', async () => {
       const left = await Either.asyncAttempt(errorAsyncFunction, [0])
@@ -345,7 +388,9 @@ describe('Either: Left & Right', () => {
 
 describe('Cases from docs', () => {
   it('map', () => {
-    const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+    const divide = (dividend: number) => (
+      divider: number,
+    ): Either.Shape<string, number> => {
       if (divider === 0) {
         return Either.left('Divider is zero!')
       }
@@ -359,14 +404,18 @@ describe('Cases from docs', () => {
   })
 
   it('chain', () => {
-    const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+    const divide = (dividend: number) => (
+      divider: number,
+    ): Either.Shape<string, number> => {
       if (divider === 0) {
         return Either.left('Divider is zero!')
       }
       return Either.right(dividend / divider)
     }
 
-    const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
+    const nonZeroMultiply = (multiplicand: number) => (
+      factor: number,
+    ): Either.Shape<string, number> => {
       if (factor === 0) {
         return Either.left('Factor is zero!')
       }
@@ -396,7 +445,10 @@ describe('Cases from docs', () => {
 
   it('filter', () => {
     const example = Either.right<number, number>(0)
-    const result = example.filter((x) => x !== 0).map((x) => 1 / x).get() // 0
+    const result = example
+      .filter((x) => x !== 0)
+      .map((x) => 1 / x)
+      .get() // 0
 
     expect(result).toBe(0)
   })
@@ -476,13 +528,15 @@ describe('Cases from docs', () => {
 
   // ========= DOC TESTS =========
   it('Chain from doc', () => {
-
     const greeting = Either.chain(greetChain, Either.right('Jake')).get()
     expect(greeting).toBe('Welcome, Jake!')
 
     // Server error
 
-    const serverError = Either.chain(greetChain, Either.left('Server error')).get()
+    const serverError = Either.chain(
+      greetChain,
+      Either.left('Server error'),
+    ).get()
     expect(serverError).toBe('Server error')
   })
 })
