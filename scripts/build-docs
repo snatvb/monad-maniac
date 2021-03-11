@@ -3,7 +3,6 @@ rm -rf docs && \
   ./node_modules/.bin/typedoc \
     --options scripts/typedoc.js \
     --includes src \
-    --theme doc-theme/bin/default \
     --tsconfig ts/doc.tsconfig.json \
     src && \
   touch docs/.nojekyll && \
