@@ -5,8 +5,8 @@ import { Nullable } from './types'
 
 /** Mather type for caseOf */
 export type CaseOf<L, R, U> = {
-  Right: (value: R) => U,
-  Left: (value: L) => U,
+  Right: (value: R) => U
+  Left: (value: L) => U
 }
 
 /** This is alias for normal display from context (`Either.Either` => `Either.Shape`) */
@@ -36,7 +36,30 @@ export interface Either<L, R> extends Functor<R> {
    * @param f Function to apply for Right value
    */
   map<U>(f: (value: R) => U): Either<L, U>
-    /**
+
+  /**
+   * Apply some function to value in container. `map` for `Left`.
+   * Returns value will be wrap in `Right`
+   *
+   * ```ts
+   * import { Either } from 'monad-maniac'
+   *
+   * const divide = (dividend: number) => (divider: number): Either.Shape<string, number> => {
+   * if (divider === 0) {
+   *   return Either.left('Divider is zero!')
+   * }
+   *  return Either.right(dividend / divider)
+   * }
+   *
+   * const resultErrorDivide = divide(10)(0).map(double).get() // 'Divider is zero!'
+   * const resultErrorDivide = divide(10)(0).map(double).or(() => 0).get() // 0
+   * ```
+   *
+   * @param f Function to apply for Right value
+   */
+  or(f: () => R): Either<L, R>
+
+  /**
    * Apply some function to value in container `Left`. Like `map` for `Right`.
    *
    * The methods returns result from function or value from `Right`.
@@ -69,10 +92,10 @@ export interface Either<L, R> extends Functor<R> {
    * }
    *
    * const nonZeroMultiply = (multiplicand: number) => (factor: number): Either.Shape<string, number> => {
-    *  if (factor === 0) {
-    *    return Either.left('Factor is zero!')
-    *  }
-    *  return Either.right(multiplicand * factor)
+   *  if (factor === 0) {
+   *    return Either.left('Factor is zero!')
+   *  }
+   *  return Either.right(multiplicand * factor)
    * }
    *
    * const resultNormal = divide(10)(2).chain(nonZeroMultiply(20)).get() // 100
@@ -186,7 +209,7 @@ export interface Either<L, R> extends Functor<R> {
    * ```
    */
   caseOf<U>(matcher: CaseOf<L, R, U>): U
-    /**
+  /**
    * Converting `Either` to `Maybe`.
    * If value in `Left` will returns `Nothing`, else
    * returns result `Maybe.of` for value from `Right`.
@@ -315,7 +338,9 @@ export function get<L, R>(either: Either<L, R>): L | R {
  * Either.fromNullable<string, number>(null).toString() // Left(null)
  * ```
  */
-export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, R> {
+export function fromNullable<L, R>(
+  value: Nullable<R | L>,
+): Either<Nullable<L>, R> {
   if (value === null || value === undefined) {
     return new Left<Nullable<L>, R>(value as Nullable<L>)
   }
@@ -342,13 +367,21 @@ export function fromNullable<L, R>(value: Nullable<R | L>): Either<Nullable<L>, 
  *
  * ```
  */
-export function attempt<R>(f: (...args: any[]) => R, args: any[]): Either<Error, R>
-export function attempt<R>(f: (...args: any[]) => R): (args: any[]) => Either<Error, R>
-export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error, R> | ((args: any[]) => Either<Error, R>) {
+export function attempt<R>(
+  f: (...args: any[]) => R,
+  args: any[],
+): Either<Error, R>
+export function attempt<R>(
+  f: (...args: any[]) => R,
+): (args: any[]) => Either<Error, R>
+export function attempt<R>(
+  f: (...args: any[]) => R,
+  args?: any[],
+): Either<Error, R> | ((args: any[]) => Either<Error, R>) {
   const op = (args: any[]) => {
     try {
       return new Right<Error, R>(f(...args))
-    } catch(error) {
+    } catch (error) {
       return new Left<Error, R>(error)
     }
   }
@@ -378,13 +411,21 @@ export function attempt<R>(f: (...args: any[]) => R, args?: any[]): Either<Error
  *
  * ```
  */
-export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args: any[]): Promise<Either<Error, R>>
-export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>): (args: any[]) => Promise<Either<Error, R>>
-export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args?: any[]): Promise<Either<Error, R>> | ((args: any[]) => Promise<Either<Error, R>>) {
+export function asyncAttempt<R>(
+  f: (...args: any[]) => Promise<R>,
+  args: any[],
+): Promise<Either<Error, R>>
+export function asyncAttempt<R>(
+  f: (...args: any[]) => Promise<R>,
+): (args: any[]) => Promise<Either<Error, R>>
+export function asyncAttempt<R>(
+  f: (...args: any[]) => Promise<R>,
+  args?: any[],
+): Promise<Either<Error, R>> | ((args: any[]) => Promise<Either<Error, R>>) {
   const op = async (args: any[]) => {
     try {
       return new Right<Error, R>(await f(...args))
-    } catch(error) {
+    } catch (error) {
       return new Left<Error, R>(error)
     }
   }
@@ -413,12 +454,20 @@ export function asyncAttempt<R>(f: (...args: any[]) => Promise<R>, args?: any[])
  *
  * ```
  * */
-export function map<L, R, U>(f: (value: R) => U, either: Either<L, R>): Either<L, U>
+export function map<L, R, U>(
+  f: (value: R) => U,
+  either: Either<L, R>,
+): Either<L, U>
 /**
  * Just curried `map`.
  */
-export function map<L, R, U>(f: (value: R) => U): (either: Either<L, R>) => Either<L, U>
-export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
+export function map<L, R, U>(
+  f: (value: R) => U,
+): (either: Either<L, R>) => Either<L, U>
+export function map<L, R, U>(
+  f: (value: R) => U,
+  either?: Either<L, R>,
+): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
   const op = (either: Either<L, R>) => either.map(f)
   return helpers.curry1(op, either)
 }
@@ -438,12 +487,20 @@ export function map<L, R, U>(f: (value: R) => U, either?: Either<L, R>): Either<
  * ), result).get() // 'Welcome, Jake' or 'Server error'
  * ```
  * */
-export function chain<L, R, U>(f: (value: R) => Either<L, U>, either: Either<L, R>): Either<L, U>
+export function chain<L, R, U>(
+  f: (value: R) => Either<L, U>,
+  either: Either<L, R>,
+): Either<L, U>
 /**
  * Just curried `chain`.
  */
-export function chain<L, R, U>(f: (value: R) => Either<L, U>): (either: Either<L, R>) => Either<L, U>
-export function chain<L, R, U>(f: (value: R) => Either<L, U>, either?: Either<L, R>): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
+export function chain<L, R, U>(
+  f: (value: R) => Either<L, U>,
+): (either: Either<L, R>) => Either<L, U>
+export function chain<L, R, U>(
+  f: (value: R) => Either<L, U>,
+  either?: Either<L, R>,
+): Either<L, U> | ((either: Either<L, R>) => Either<L, U>) {
   const op = (either: Either<L, R>) => either.chain(f)
   return helpers.curry1(op, either)
 }
@@ -468,8 +525,13 @@ export function orElse<L, R, U>(f: (value: L) => U, either: Either<L, R>): R | U
 /**
  * Just curried `orElse`.
  */
-export function orElse<L, R, U>(f: (value: L) => U): (either: Either<L, R>) => R | U
-export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
+export function orElse<L, R, U>(
+  f: (value: L) => U,
+): (either: Either<L, R>) => R | U
+export function orElse<L, R, U>(
+  f: (value: L) => U,
+  either?: Either<L, R>,
+): R | U | ((either: Either<L, R>) => R | U) {
   const op = (either: Either<L, R>) => either.orElse(f)
   return helpers.curry1(op, either)
 }
@@ -488,12 +550,20 @@ export function orElse<L, R, U>(f: (value: L) => U, either?: Either<L, R>): R | 
  * Either.filter((x) => x < 300, right) // Right(150)
  * ```
  */
-export function filter<L, R>(predicate: (value: R) => boolean, either: Either<L, R>): Either<L | R, R >
+export function filter<L, R>(
+  predicate: (value: R) => boolean,
+  either: Either<L, R>,
+): Either<L | R, R>
 /**
  * Just curried `filter`.
  */
-export function filter<L, R>(predicate: (value: R) => boolean): (either: Either<L, R>) => Either<L | R, R >
-export function filter<L, R>(predicate: (value: R) => boolean, either?: Either<L, R>): Either<L | R, R > | ((either: Either<L, R>) => Either<L | R, R >) {
+export function filter<L, R>(
+  predicate: (value: R) => boolean,
+): (either: Either<L, R>) => Either<L | R, R>
+export function filter<L, R>(
+  predicate: (value: R) => boolean,
+  either?: Either<L, R>,
+): Either<L | R, R> | ((either: Either<L, R>) => Either<L | R, R>) {
   const op = (either: Either<L, R>) => either.filter(predicate)
   return helpers.curry1(op, either)
 }
@@ -515,8 +585,13 @@ export function getOrElse<L, R, U>(defaultValue: U, either: Either<L, R>): R | U
 /**
  * Just curried `getOrElse`.
  */
-export function getOrElse<L, R, U>(defaultValue: U): (either: Either<L, R>) => R | U
-export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | U | ((either: Either<L, R>) => R | U) {
+export function getOrElse<L, R, U>(
+  defaultValue: U,
+): (either: Either<L, R>) => R | U
+export function getOrElse<L, R, U>(
+  defaultValue: U,
+  either?: Either<L, R>,
+): R | U | ((either: Either<L, R>) => R | U) {
   const op = (either: Either<L, R>) => either.getOrElse(defaultValue)
   return helpers.curry1(op, either)
 }
@@ -539,12 +614,20 @@ export function getOrElse<L, R, U>(defaultValue: U, either?: Either<L, R>): R | 
  * Either.caseOf(matcher, right) // 300
  * ```
  */
-export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either: Either<L, R>): U
+export function caseOf<L, R, U>(
+  matcher: CaseOf<L, R, U>,
+  either: Either<L, R>,
+): U
 /**
  * Just curried `caseOf`.
  */
-export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>): (either: Either<L, R>) => U
-export function caseOf<L, R, U>(matcher: CaseOf<L, R, U>, either?: Either<L, R>): U | ((either: Either<L, R>) => U) {
+export function caseOf<L, R, U>(
+  matcher: CaseOf<L, R, U>,
+): (either: Either<L, R>) => U
+export function caseOf<L, R, U>(
+  matcher: CaseOf<L, R, U>,
+  either?: Either<L, R>,
+): U | ((either: Either<L, R>) => U) {
   const op = (either: Either<L, R>) => either.caseOf(matcher)
   return helpers.curry1(op, either)
 }
@@ -567,7 +650,7 @@ export function toMaybe<L, R>(either: Either<L, R>): Maybe.Shape<R> {
   return either.toMaybe()
 }
 
-export class Right<L ,R> implements Either<L ,R> {
+export class Right<L, R> implements Either<L, R> {
   private value: R
 
   constructor(value: R) {
@@ -578,6 +661,10 @@ export class Right<L ,R> implements Either<L ,R> {
     return of(f(this.value))
   }
 
+  or(_: (value: R) => R): Either<L, R> {
+    return this
+  }
+
   orElse<U>(_f: (value: L) => U): U | R {
     return this.value
   }
@@ -586,7 +673,7 @@ export class Right<L ,R> implements Either<L ,R> {
     return f(this.value)
   }
 
-  filter(predicate: (value: R) => boolean): Either<L | R, R > {
+  filter(predicate: (value: R) => boolean): Either<L | R, R> {
     if (predicate(this.value) === true) {
       return this as Either<L, R>
     }
@@ -615,7 +702,7 @@ export class Right<L ,R> implements Either<L ,R> {
   }
 }
 
-export class Left<L, R> implements  Either<L, R> {
+export class Left<L, R> implements Either<L, R> {
   private value: L
 
   constructor(value: L) {
@@ -626,6 +713,10 @@ export class Left<L, R> implements  Either<L, R> {
     return new Left<L, U>(this.value)
   }
 
+  or(f: () => R): Either<L, R> {
+    return of(f())
+  }
+
   orElse<U>(f: (value: L) => U): U {
     return f(this.value)
   }
@@ -634,7 +725,7 @@ export class Left<L, R> implements  Either<L, R> {
     return new Left<L, U>(this.value)
   }
 
-  filter(_predicate: (value: R) => boolean): Either<L | R, R > {
+  filter(_predicate: (value: R) => boolean): Either<L | R, R> {
     return this
   }
   getOrElse<U>(defaultValue: U): R | U {

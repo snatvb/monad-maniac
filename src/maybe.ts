@@ -38,6 +38,21 @@ export interface Maybe<T> extends Functor<T>, Applicative<T> {
    */
   map<U>(f: (value: NonNullable<T>) => Nullable<U>): Maybe<NonNullable<U>>
 
+  /**
+   * If your Maybe contains Nothing and you want make some function
+   * in the case you need use `or`. Your function will be called only
+   * on Nothing() and result wrap in Maybe. In just your function will
+   * be ignored.
+   *
+   * ```ts
+   * import { Maybe } from 'monad-maniac'
+   *
+   * const zeroDivider = 0
+   * const tenDivide = (n: number): number => n === 0 ? null : 10 / n
+   * // map(tenDivide) will returns `Nothing()`
+   * const foo = Maybe.of(zeroDivider).map(tenDivide).or(() => 10) // Just(10)
+   * ```
+   */
   or(f: () => Nullable<T>): Maybe<NonNullable<T>>
 
   /**
