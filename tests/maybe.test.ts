@@ -457,6 +457,28 @@ describe('Just and Nothing', () => {
     ).toBe(0)
   })
 
+  it('cata', () => {
+    const just = Maybe.of(5)
+    expect(just.toString()).toBe('Just(5)')
+    expect(
+      just.map(double).cata(
+        (x) => x + 5,
+        () => 0,
+      ),
+    ).toBe(15)
+    expect(
+      just
+        .map(double)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+        .cata(
+          (x) => x + 5,
+          () => 0,
+        ),
+    ).toBe(0)
+  })
+
   it('join', () => {
     const just = Maybe.of(5)
     const nestedJust = Maybe.of(just)
