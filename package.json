@@ -61,9 +61,9 @@
     }
   },
   "devDependencies": {
-    "@types/jest": "24.0.13",
+    "@types/jest": "26.0.20",
     "coveralls": "3.0.3",
-    "jest": "24.8.0",
+    "jest": "26.6.3",
     "rimraf": "3.0.2",
     "ts-jest": "24.0.2",
     "typedoc": "0.14.2",
