@@ -1,6 +1,6 @@
 {
   "name": "monad-maniac",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "monads with right rules",
   "scripts": {
     "ts:cjs": "yarn tsc -p ts/cjs.tsconfig.json",
