@@ -334,6 +334,29 @@ describe('Just and Nothing', () => {
     ).toBe('Nothing()')
   })
 
+  it('or', () => {
+    const just = Maybe.of(5)
+    expect(just.or(() => 3).toString()).toBe('Just(5)')
+    expect(
+      just
+        .map(double)
+        .or(() => 20)
+        .map(double)
+        .map(toNothing)
+        .map(double)
+        .toString(),
+    ).toBe('Nothing()')
+    expect(
+      just
+        .map(double)
+        .map(double)
+        .map(toNull)
+        .or(() => 5)
+        .map(double)
+        .toString(),
+    ).toBe('Just(10)')
+  })
+
   it('chain', () => {
     const just = Maybe.of(5)
     const justString = Maybe.of('test')
