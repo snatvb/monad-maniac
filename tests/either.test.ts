@@ -1,6 +1,7 @@
 import { Either } from '../src'
 
 const double = (x: number): number => x * 2
+const identity = <T>(x: T) => x
 const chainDouble = (x: number): Either.Shape<string, number> =>
   Either.right(x * 2)
 const greetChain = (name: string): Either.Shape<string, string> =>
@@ -372,6 +373,14 @@ describe('Either: Left & Right', () => {
 
     expect(left.caseOf(matcher)).toBe(12)
     expect(right.caseOf(matcher)).toBe(300)
+  })
+
+  it('cata', () => {
+    const left: Either.Shape<string, number> = new Either.Left('Server error')
+    const right: Either.Shape<string, number> = new Either.Right(150)
+
+    expect(left.cata((msg) => msg.length, identity)).toBe(12)
+    expect(right.cata(() => 10, double)).toBe(300)
   })
 
   it('filter', () => {

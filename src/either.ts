@@ -209,6 +209,14 @@ export interface Either<L, R> extends Functor<R> {
    * ```
    */
   caseOf<U>(matcher: CaseOf<L, R, U>): U
+
+  /**
+   * Works like caseOf, but use two functions as arguments for unwrap
+   * instead of object allocation.
+   * @param leftFn Function will called with Left
+   * @param rightFn Function will called with Right
+   */
+  cata<U>(leftFn: (value: L) => U, rightFn: (value: R) => U): U
   /**
    * Converting `Either` to `Maybe`.
    * If value in `Left` will returns `Nothing`, else
@@ -697,6 +705,9 @@ export class Right<L, R> implements Either<L, R> {
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Right(this.value)
   }
+  cata<U>(_: (value: L) => U, rightFn: (value: R) => U): U {
+    return rightFn(this.value)
+  }
   toMaybe(): Maybe.Shape<R> {
     return Maybe.of(this.value)
   }
@@ -745,6 +756,9 @@ export class Left<L, R> implements Either<L, R> {
   }
   caseOf<U>(matcher: CaseOf<L, R, U>): U {
     return matcher.Left(this.value)
+  }
+  cata<U>(leftFn: (value: L) => U): U {
+    return leftFn(this.value)
   }
   toMaybe(): Maybe.Shape<R> {
     return Maybe.nothing()

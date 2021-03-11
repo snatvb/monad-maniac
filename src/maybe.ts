@@ -180,6 +180,14 @@ export interface Maybe<T> extends Functor<T>, Applicative<T> {
   caseOf<U>(matcher: CaseOf<T, U>): U
 
   /**
+   * Works like caseOf, but use two functions as arguments for unwrap
+   * instead of object allocation.
+   * @param justFn Function will called with Just
+   * @param nothingFn Function will called with Nothing
+   */
+  cata<U>(justFn: (value: NonNullable<T>) => U, nothingFn: () => U): U
+
+  /**
    * Unwrap `Maybe` from `Maybe`, if in `Maybe` will not `Maybe` then returns `Nothing`.
    *
    *   _Maybe(Maybe a) -> Maybe a_
@@ -672,6 +680,10 @@ export class Just<T> implements Maybe<T> {
     return matcher.Just(this.value)
   }
 
+  cata<U>(justFn: (value: NonNullable<T>) => U): U {
+    return justFn(this.value)
+  }
+
   /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybe.html#join) */
   join(): JoinMaybe<T> {
     return (this.value instanceof Just
@@ -747,6 +759,10 @@ export class Nothing<T> implements Maybe<T> {
   /** Method implements from [`Maybe.caseOf`](../interfaces/_maybe_.maybe.html#caseof) */
   caseOf<U>(matcher: CaseOf<T, U>): U {
     return matcher.Nothing()
+  }
+
+  cata<U>(_: (value: NonNullable<T>) => U, nothingFn: () => U): U {
+    return nothingFn()
   }
 
   /** Method implements from [`Maybe.join`](../interfaces/_maybe_.maybe.html#join) */
