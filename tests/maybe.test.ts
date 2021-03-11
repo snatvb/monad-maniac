@@ -62,7 +62,9 @@ describe('Pure functions', () => {
   describe('chain', () => {
     it('with value', () => {
       const just = Maybe.of('foo')
-      expect(Maybe.chain(concatChain('bar'), just).getOrElse(undefined)).toBe('foobar')
+      expect(Maybe.chain(concatChain('bar'), just).getOrElse(undefined)).toBe(
+        'foobar',
+      )
     })
 
     it('with null and undefined', () => {
@@ -71,7 +73,9 @@ describe('Pure functions', () => {
       const nothing2 = Maybe.of(undefined)
       const chained1 = Maybe.chain((x) => Maybe.of(x), nothing)
       const chained2 = Maybe.chain((x) => Maybe.of(x), nothing2)
-      expect(Maybe.chain(toNothingChain, just).getOrElse(undefined)).toBeUndefined()
+      expect(
+        Maybe.chain(toNothingChain, just).getOrElse(undefined),
+      ).toBeUndefined()
       expect(chained1.getOrElse(undefined)).toBe(undefined)
       expect(chained2.getOrElse(undefined)).toBe(undefined)
     })
@@ -153,8 +157,7 @@ describe('Pure functions', () => {
     })
 
     it('with null', () => {
-      const justToNothing = Maybe
-        .of(5)
+      const justToNothing = Maybe.of(5)
         .map(double)
         .map(double)
         .map(toNothing)
@@ -237,17 +240,24 @@ describe('Pure functions', () => {
   describe('lift', () => {
     const find = <T>(predicate: (v: T) => boolean) => (list: T[]): T | void => {
       const fn = ([item, ...list]: T[]): T | void => {
-        if (predicate(item) === true) { return item }
-        if (list.length === 0) { return undefined }
+        if (predicate(item) === true) {
+          return item
+        }
+        if (list.length === 0) {
+          return undefined
+        }
         return fn(list)
       }
       return fn(list)
     }
     type DataItem = {
-      id: number,
-      name: string,
+      id: number
+      name: string
     }
-    const data: DataItem[] = [{ id: 1, name: 'Jayson' }, { id: 2, name: 'Michael' }]
+    const data: DataItem[] = [
+      { id: 1, name: 'Jayson' },
+      { id: 2, name: 'Michael' },
+    ]
     const predicateValue = ({ id }: DataItem) => id === 1
     const predicateNull = ({ id }: DataItem) => id === 10
 
@@ -273,22 +283,26 @@ describe('Pure functions', () => {
     })
 
     it('case from docs', () => {
-      const  find = <T>(list: T[]) => (predicate: (v: T) => boolean) => list.find(predicate)
+      const find = <T>(list: T[]) => (predicate: (v: T) => boolean) =>
+        list.find(predicate)
 
       type DataItem = {
         id: number
         name: string
       }
 
-      const data: DataItem[] = [{ id: 1, name: 'Jayson' }, { id: 2, name: 'Michael' }]
+      const data: DataItem[] = [
+        { id: 1, name: 'Jayson' },
+        { id: 2, name: 'Michael' },
+      ]
       const safeFindInList = Maybe.lift(find(data))
 
       const resultJust = safeFindInList(({ id }) => id === 1) // Just([object Object])
       const resultNothing = safeFindInList(({ id }) => id === 10) // Nothing()
 
       const matcher: Maybe.CaseOf<DataItem, string> = {
-       Just: ({ name }) => name,
-       Nothing: () => 'UNKNOWN'
+        Just: ({ name }) => name,
+        Nothing: () => 'UNKNOWN',
       }
 
       expect(resultJust.caseOf(matcher)).toBe('Jayson')
@@ -309,22 +323,14 @@ describe('Just and Nothing', () => {
     expect(just.toString()).toBe('Just(5)')
     expect(just.map(double).toString()).toBe('Just(10)')
     expect(just.map(double).map(double).toString()).toBe('Just(20)')
-    expect(just.map(double).map(double).map(toNothing).toString()).toBe('Nothing()')
+    expect(just.map(double).map(double).map(toNothing).toString()).toBe(
+      'Nothing()',
+    )
     expect(
-      just
-        .map(double)
-        .map(double)
-        .map(toNothing)
-        .map(double)
-        .toString()
+      just.map(double).map(double).map(toNothing).map(double).toString(),
     ).toBe('Nothing()')
     expect(
-      just
-        .map(double)
-        .map(double)
-        .map(toNull)
-        .map(double)
-        .toString()
+      just.map(double).map(double).map(toNull).map(double).toString(),
     ).toBe('Nothing()')
   })
 
@@ -337,12 +343,7 @@ describe('Just and Nothing', () => {
     expect(just.chain(doubleChain).getOrElse(undefined)).toBe(10)
     expect(just.map(double).chain(doubleChain).getOrElse(undefined)).toBe(20)
     expect(
-      just
-        .map(double)
-        .map(double)
-        .map(toNull)
-        .chain(doubleChain)
-        .isNothing()
+      just.map(double).map(double).map(toNull).chain(doubleChain).isNothing(),
     ).toBeTruthy()
   })
 
@@ -357,12 +358,36 @@ describe('Just and Nothing', () => {
   it('filter', () => {
     const just = Maybe.of(5)
     expect(just.toString()).toBe('Just(5)')
-    expect(just.filter((x) => x > 5).getOrElse('Not bigger 5')).toBe('Not bigger 5')
+    expect(just.filter((x) => x > 5).getOrElse('Not bigger 5')).toBe(
+      'Not bigger 5',
+    )
     expect(just.filter((x) => x === 5).getOrElse('Not 5')).toBe(5)
-    expect(just.map(double).filter((x) => x === 5).getOrElse('Not 5')).toBe('Not 5')
-    expect(just.map(double).filter((x) => x > 5).getOrElse('Not bigger 5')).toBe(10)
-    expect(just.map(double).map(toNothing).filter((x) => x > 5).getOrElse('Not bigger 5')).toBe('Not bigger 5')
-    expect(just.map(double).map(toNull).filter((x) => x > 5).getOrElse('Not bigger 5')).toBe('Not bigger 5')
+    expect(
+      just
+        .map(double)
+        .filter((x) => x === 5)
+        .getOrElse('Not 5'),
+    ).toBe('Not 5')
+    expect(
+      just
+        .map(double)
+        .filter((x) => x > 5)
+        .getOrElse('Not bigger 5'),
+    ).toBe(10)
+    expect(
+      just
+        .map(double)
+        .map(toNothing)
+        .filter((x) => x > 5)
+        .getOrElse('Not bigger 5'),
+    ).toBe('Not bigger 5')
+    expect(
+      just
+        .map(double)
+        .map(toNull)
+        .filter((x) => x > 5)
+        .getOrElse('Not bigger 5'),
+    ).toBe('Not bigger 5')
   })
 
   it('toString', () => {
@@ -376,8 +401,18 @@ describe('Just and Nothing', () => {
     const just = Maybe.of(5)
     const maybeDouble = Maybe.of(double)
     const nothing = Maybe.of(null)
-    expect(just.apply(maybeDouble).map((x) => x + 15).toString()).toBe('Just(25)')
-    expect(just.apply(nothing).map((x) => x + 15).toString()).toBe('Nothing()')
+    expect(
+      just
+        .apply(maybeDouble)
+        .map((x) => x + 15)
+        .toString(),
+    ).toBe('Just(25)')
+    expect(
+      just
+        .apply(nothing)
+        .map((x) => x + 15)
+        .toString(),
+    ).toBe('Nothing()')
     expect(nothing.apply(maybeDouble).toString()).toBe('Nothing()')
   })
 
@@ -395,18 +430,14 @@ describe('Just and Nothing', () => {
         .map(double)
         .map(toNothing)
         .map(double)
-        .caseOf(caseOfMather)
+        .caseOf(caseOfMather),
     ).toBe(0)
   })
 
   it('join', () => {
     const just = Maybe.of(5)
     const nestedJust = Maybe.of(just)
-    const joinedJust = Maybe
-      .of(Maybe.of(nestedJust))
-      .join()
-      .join()
-      .join()
+    const joinedJust = Maybe.of(Maybe.of(nestedJust)).join().join().join()
     const nothing = Maybe.of<number>(null)
     const nestedNothing = Maybe.of(nothing)
     expect(just.toString()).toBe('Just(5)')
@@ -485,14 +516,14 @@ describe('Other cases', () => {
       }
     }
     const maybeObject = Maybe.of<NestedOptional>({ a: {} })
-    const maybeObjectFull = Maybe.of<NestedOptional>({ a: { b: { c: 'monad-maniac' } } })
+    const maybeObjectFull = Maybe.of<NestedOptional>({
+      a: { b: { c: 'monad-maniac' } },
+    })
 
     it('getting exists field', () => {
-      expect(
-        maybeObject
-          .map((obj) => obj.a)
-          .toString()
-      ).toBe('Just([object Object])')
+      expect(maybeObject.map((obj) => obj.a).toString()).toBe(
+        'Just([object Object])',
+      )
     })
     it('getting not exists field and try concat string from value last field', () => {
       expect(
@@ -501,7 +532,7 @@ describe('Other cases', () => {
           .map((obj) => obj.b)
           .map((obj) => obj.c)
           .map((str) => `this is ${str}`)
-          .toString()
+          .toString(),
       ).toBe('Nothing()')
     })
 
@@ -512,7 +543,7 @@ describe('Other cases', () => {
           .map((obj) => obj.b)
           .map((obj) => obj.c)
           .map((str) => `this is ${str}`)
-          .toString()
+          .toString(),
       ).toBe('Just(this is monad-maniac)')
     })
 
@@ -524,7 +555,7 @@ describe('Other cases', () => {
           .map((obj) => obj.c)
           .filter((str) => str.length < 3)
           .map((str) => `this is ${str}`)
-          .toString()
+          .toString(),
       ).toBe('Nothing()')
     })
   })
