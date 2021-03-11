@@ -179,6 +179,12 @@ export interface Maybe<T> extends Functor<T>, Applicative<T> {
    */
   caseOf<U>(matcher: CaseOf<T, U>): U
 
+  /**
+   * Works like caseOf, but use two functions as arguments for unwrap
+   * instead of object allocation.
+   * @param justFn Function will called with Just
+   * @param nothingFn Function will called with Nothing
+   */
   cata<U>(justFn: (value: NonNullable<T>) => U, nothingFn: () => U): U
 
   /**
